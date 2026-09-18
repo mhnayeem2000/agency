@@ -21,14 +21,22 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/6.1/howto/deployment/checklist/
 
 SECRET_KEY = os.getenv("SECRET_KEY", "django-insecure-3p))^vfxrp-os6nc^2m!acp$v!3sr%*$=8yf@o&st7h%rysxxs")
-DEBUG = os.getenv("DEBUG", "False").lower() in {"1", "true", "yes", "on"}
+DEBUG = True
 
-ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "127.0.0.1,localhost").split(",")
+ALLOWED_HOSTS = os.getenv(
+    "ALLOWED_HOSTS",
+    "127.0.0.1,localhost,ageny.webnestle.com,www.ageny.webnestle.com",
+).split(",")
 ALLOWED_HOSTS = [host.strip() for host in ALLOWED_HOSTS if host.strip()]
 
 CSRF_TRUSTED_ORIGINS = [
     origin.strip()
-    for origin in os.getenv("CSRF_TRUSTED_ORIGINS", "http://127.0.0.1:8000,http://localhost:8000").split(",")
+    for origin in os.getenv(
+        "CSRF_TRUSTED_ORIGINS",
+        "http://127.0.0.1:8000,http://localhost:8000,"
+        "http://ageny.webnestle.com,https://ageny.webnestle.com,"
+        "http://www.ageny.webnestle.com,https://www.ageny.webnestle.com",
+    ).split(",")
     if origin.strip()
 ]
 
