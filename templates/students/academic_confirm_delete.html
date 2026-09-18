@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+
+{% block title %}
+Remove Academic Information
+{% endblock %}
+
+
+{% block content %}
+
+<div class="narrow-layout">
+    <div class="card confirmation-card">
+        <p class="eyebrow">Profile record</p>
+        <h2>Remove academic record?</h2>
+        <p>This will remove the following information from your profile:</p>
+        <strong>{{ academic.get_level_display }} · {{ academic.institution }}</strong>
+        <form method="POST" class="form-actions">
+            {% csrf_token %}
+            <button class="button-danger" type="submit">Yes, remove</button>
+            <a class="button button-secondary" href="{% url 'profile' %}">Keep record</a>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

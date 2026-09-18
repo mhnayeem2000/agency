@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}{% if student %}Edit student{% else %}Add student{% endif %}{% endblock %}
+
+{% block content %}
+<div class="agency-form-layout">
+    <div class="page-heading">
+        <div>
+            <p class="eyebrow">Staff workspace</p>
+            <h1>{% if student %}Edit student{% else %}Add student{% endif %}</h1>
+            <p class="muted">{% if student %}Update this student's agency record.{% else %}Create a student account and start their application record.{% endif %}</p>
+        </div>
+    </div>
+    <section class="card agency-form-card">
+        <form method="POST" class="stack">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <div class="form-actions">
+                <button type="submit">{% if student %}Save student{% else %}Create student{% endif %}</button>
+                <a class="button button-secondary" href="{% if student %}{% url 'agency_student_detail' student.id %}{% else %}{% url 'agency_dashboard' %}{% endif %}">Cancel</a>
+            </div>
+        </form>
+    </section>
+</div>
+{% endblock %}

@@ -1,0 +1,11 @@
+{% extends "errors/error_base.html" %}
+{% block title %}Page not found | Student Agency{% endblock %}
+{% block content %}
+<section class="error-card">
+    <p class="error-note">Lost page</p>
+    <p class="error-code">404</p>
+    <h1>We could not find that page.</h1>
+    <p>The link may be outdated, or the page may have moved. Let us get you back to a useful place.</p>
+    <div class="error-actions"><a class="button" href="/">Go to home</a><a class="button button-secondary" href="javascript:history.back()">Go back</a></div>
+</section>
+{% endblock %}

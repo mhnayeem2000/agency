@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+
+{% block title %}
+Student Dashboard
+{% endblock %}
+
+
+{% block content %}
+
+<div class="page-heading">
+    <div>
+        <p class="eyebrow">Student workspace</p>
+        <h1>Welcome back, {{ user.first_name|default:user.username }}.</h1>
+        <p class="muted">Here is the clearest view of what is moving and what needs your attention.</p>
+    </div>
+    <a class="button button-secondary" href="{% url 'profile' %}">Update profile</a>
+</div>
+
+<div class="dashboard-status card">
+    <div class="status-summary">
+        <div>
+            <p class="eyebrow">Application status</p>
+            <h2>{{ profile.get_current_status_display }}</h2>
+            <p>{{ profile.progress }}% complete{% if profile.next_step %} · Next: {{ profile.next_step }}{% endif %}</p>
+        </div>
+        <a class="button" href="{% url 'progress' %}">View progress</a>
+    </div>
+    <progress class="application-progress" value="{{ profile.progress }}" max="100">{{ profile.progress }}%</progress>
+</div>
+
+<section class="card dashboard-grid">
+    <div class="section-heading"><div><p class="eyebrow">Your applications</p><h3>University files</h3></div></div>
+    {% if applications %}
+        <div class="item-list">
+            {% for application in applications %}
+                <div class="list-item"><div><a href="{% url 'application_detail' application.id %}"><strong>{{ application.university }}</strong></a><p>{{ application.destination_country }} · {{ application.course }}</p></div><span class="status-pill">{{ application.get_current_status_display }}</span></div>
+            {% endfor %}
+        </div>
+    {% else %}<div class="empty-state">Your agency has not added an application file yet.</div>{% endif %}
+</section>
+
+<div class="grid-2 dashboard-grid">
+    <section class="card">
+        <div class="section-heading"><div><p class="eyebrow">Attention needed</p><h3>Urgent documents</h3></div><span class="count-badge">{{ urgent_documents|length }}</span></div>
+        {% if urgent_documents %}
+            <div class="item-list">
+                {% for document in urgent_documents %}
+                    <div class="list-item"><div><strong>{{ document.name }}</strong>{% if document.note %}<p>{{ document.note }}</p>{% endif %}</div><span class="status-pill danger">Urgent</span></div>
+                {% endfor %}
+            </div>
+        {% else %}<div class="empty-state">No urgent documents at the moment.</div>{% endif %}
+        <a class="button-ghost" href="{% url 'documents' %}">View all documents →</a>
+    </section>
+
+    <section class="card">
+        <div class="section-heading"><div><p class="eyebrow">Checklist</p><h3>Required documents</h3></div><span class="count-badge">{{ missing_documents|length }}</span></div>
+        {% if missing_documents %}
+            <div class="item-list">
+                {% for document in missing_documents %}<div class="list-item"><strong>{{ document.name }}</strong>{% if document.priority == "urgent" %}<span class="status-pill danger">Urgent</span>{% else %}<span class="status-pill warning">Pending</span>{% endif %}</div>{% endfor %}
+            </div>
+        {% else %}<div class="empty-state">All required documents have been received.</div>{% endif %}
+    </section>
+</div>
+
+<div class="grid-2 dashboard-grid">
+    <section class="card">
+        <div class="section-heading"><div><p class="eyebrow">Latest activity</p><h3>Recent updates</h3></div><a href="{% url 'progress' %}">See all</a></div>
+        {% if timeline %}
+            <div class="timeline-list">{% for event in timeline %}<div class="timeline-row"><span class="timeline-dot {% if event.is_completed %}complete{% endif %}"></span><div><strong>{{ event.title }}</strong><p>{{ event.description }}</p><small>{{ event.event_date|date:"d M Y, h:i A" }}</small></div></div>{% endfor %}</div>
+        {% else %}<div class="empty-state">No updates yet.</div>{% endif %}
+    </section>
+
+    <section class="card">
+        <div class="section-heading"><div><p class="eyebrow">Stay informed</p><h3>Notifications</h3></div><a href="{% url 'notifications' %}">See all</a></div>
+        {% if notifications %}<div class="item-list">{% for notification in notifications %}<div class="notification-row"><strong>{{ notification.title }}</strong><p>{{ notification.message }}</p><small>{{ notification.created_at|date:"d M Y, h:i A" }}</small></div>{% endfor %}</div>{% else %}<div class="empty-state">You are all caught up.</div>{% endif %}
+    </section>
+</div>
+
+{% endblock %}

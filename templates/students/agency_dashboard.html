@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+
+{% block title %}
+Agency Dashboard
+{% endblock %}
+
+
+{% block content %}
+
+<div class="page-heading"><div><p class="eyebrow">Staff workspace</p><h1>Agency dashboard</h1><p class="muted">A focused view of students, application status, and issues that need attention.</p></div><a class="button" href="{% url 'agency_student_create' %}">+ Add student</a></div>
+
+<div class="grid-3 agency-stats">
+    <div class="stat-card reveal"><p class="eyebrow">Students</p><div class="stat-value">{{ students|length }}</div><p>Total active profiles</p></div>
+    <div class="stat-card reveal"><p class="eyebrow">Urgent</p><div class="stat-value">{{ urgent_documents|length }}</div><p>Documents need attention</p></div>
+    <div class="stat-card reveal"><p class="eyebrow">Workspace</p><div class="stat-value">Live</div><p>Data is up to date</p></div>
+</div>
+
+<section class="card dashboard-grid reveal">
+    <div class="section-heading"><div><p class="eyebrow">Application portfolio</p><h3>University files</h3></div></div>
+    {% if applications %}
+        <div class="table-wrap"><table><thead><tr><th>Student</th><th>Country</th><th>University</th><th>Subject</th><th>Status</th></tr></thead><tbody>{% for application in applications %}<tr><td>{{ application.student.full_name|default:application.student.user.username }}</td><td>{{ application.destination_country }}</td><td><a href="{% url 'agency_application_detail' application.id %}"><strong>{{ application.university }}</strong></a></td><td>{{ application.course }}</td><td><span class="status-pill">{{ application.get_current_status_display }}</span></td></tr>{% endfor %}</tbody></table></div>
+    {% else %}<div class="empty-state">No separate application files have been created yet.</div>{% endif %}
+</section>
+
+<div class="agency-layout">
+    <section class="card reveal">
+        <div class="section-heading"><div><p class="eyebrow">Client portfolio</p><h3>Students</h3></div></div>
+        {% if students %}
+            <div class="table-wrap"><table><thead><tr><th>Student</th><th>Destination</th><th>Status</th><th>Progress</th></tr></thead><tbody>{% for student in students %}<tr><td><a href="{% url 'agency_student_detail' student.id %}"><strong>{{ student.full_name|default:student.user.username }}</strong></a><br><small>{{ student.user.email }}</small></td><td>{{ student.destination_country|default:"Not selected" }}</td><td><span class="status-pill">{{ student.get_current_status_display }}</span></td><td>{{ student.progress }}%</td></tr>{% endfor %}</tbody></table></div>
+        {% else %}<div class="empty-state">No students found.</div>{% endif %}
+    </section>
+
+    <section class="card reveal">
+        <div class="section-heading"><div><p class="eyebrow">Needs attention</p><h3>Urgent documents</h3></div></div>
+        {% if urgent_documents %}<div class="item-list">{% for document in urgent_documents %}<div class="notification-row"><strong>{{ document.student.full_name }}</strong><p>{{ document.name }}</p>{% if document.note %}<small>{{ document.note }}</small>{% endif %}</div>{% endfor %}</div>{% else %}<div class="empty-state">No urgent documents.</div>{% endif %}
+    </section>
+</div>
+
+{% endblock %}

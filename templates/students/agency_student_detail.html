@@ -1,0 +1,366 @@
+{% extends "base.html" %}
+
+
+{% block title %}
+    {{ student.full_name }}
+{% endblock %}
+
+
+{% block content %}
+
+<div class="agency-detail-page agency-student-page">
+
+<div class="detail-header">
+    <div>
+        <a class="button-ghost student-back-link" href="{% url 'agency_dashboard' %}">← Back to agency dashboard</a>
+        <div class="student-record-actions"><a class="button button-secondary" href="{% url 'agency_student_edit' student.id %}">Edit student</a><a class="remove-record" href="{% url 'agency_student_delete' student.id %}">Remove student</a></div>
+        <p class="eyebrow" style="margin-top: 22px;">Student profile</p>
+        <h1>{{ student.full_name|default:student.user.username }}</h1>
+    </div>
+    <span class="status-pill">{{ student.get_current_status_display }}</span>
+</div>
+
+
+<!-- BASIC INFORMATION -->
+
+<div class="detail-grid">
+<div class="card detail-card detail-panel">
+
+    <h3>
+        Student Information
+    </h3>
+
+
+    <p>
+        <strong>Email:</strong>
+        {{ student.user.email }}
+    </p>
+
+
+    <p>
+        <strong>Phone:</strong>
+        {{ student.phone|default:"Not provided" }}
+    </p>
+
+
+    <p>
+        <strong>Passport:</strong>
+        {{ student.passport_number|default:"Not provided" }}
+    </p>
+
+
+    <p>
+        <strong>Destination:</strong>
+        {{ student.destination_country|default:"Not selected" }}
+    </p>
+
+
+    <p>
+        <strong>University:</strong>
+        {{ student.university|default:"Not selected" }}
+    </p>
+
+
+    <p>
+        <strong>Course:</strong>
+        {{ student.course|default:"Not selected" }}
+    </p>
+
+
+    <p>
+        <strong>Intake:</strong>
+        {{ student.intake|default:"Not selected" }}
+    </p>
+
+</div>
+
+<!-- APPLICATION STATUS -->
+
+<div class="card detail-card detail-panel status-panel">
+
+    <h3>
+        Application Status
+    </h3>
+
+
+    <p>
+
+        <strong>
+            Current Status:
+        </strong>
+
+        {{ student.get_current_status_display }}
+
+    </p>
+
+
+    <p>
+
+        <strong>
+            Progress:
+        </strong>
+
+        {{ student.progress }}%
+
+    </p>
+
+
+    <!-- PROGRESS BAR -->
+
+    <progress
+        class="application-progress"
+        value="{{ student.progress }}"
+        max="100"
+    >
+        {{ student.progress }}%
+    </progress>
+
+
+    <br>
+
+
+    <p>
+
+        <strong>
+            Next Step:
+        </strong>
+
+        {{ student.next_step|default:"Not set yet" }}
+
+    </p>
+
+
+    <a class="button button-secondary" href="#status-update">
+        Update status ↓
+    </a>
+
+</div>
+</div>
+
+<div class="detail-grid detail-grid-spaced">
+<div class="card detail-card detail-panel">
+    <div class="section-heading"><div><p class="eyebrow">Student applications</p><h3>University files</h3></div><a class="button" href="{% url 'agency_application_create' student.id %}">+ New application</a></div>
+    {% if student.applications.exists %}
+        <div class="item-list">{% for application in student.applications.all %}<div class="agency-academic-row"><div><span class="status-pill">{{ application.get_current_status_display }}</span><strong>{{ application.university }}</strong><small>{{ application.destination_country }} · {{ application.course }}</small></div><a class="button-ghost" href="{% url 'agency_application_detail' application.id %}">Open file →</a></div>{% endfor %}</div>
+    {% else %}<div class="empty-state">No university application files yet.</div>{% endif %}
+</div>
+<div class="card detail-card detail-panel">
+    <div class="section-heading">
+        <div><p class="eyebrow">Student records</p><h3>Academic history</h3></div>
+        <a class="button" href="{% url 'agency_academic_create' student.id %}">+ Add record</a>
+    </div>
+
+    {% if student.academic_records.exists %}
+        <div class="item-list">
+            {% for academic in student.academic_records.all %}
+                <div class="agency-academic-row">
+                    <div>
+                        <span class="status-pill">{{ academic.get_level_display }}</span>
+                        <strong>{{ academic.institution }}</strong>
+                        <small>{% if academic.subject_or_group %}{{ academic.subject_or_group }} · {% endif %}{{ academic.result|default:"Result not added" }}</small>
+                    </div>
+                    <div class="inline-actions">
+                        <a class="button-ghost" href="{% url 'agency_academic_edit' academic.id %}">Edit</a>
+                        <a class="remove-record" href="{% url 'agency_academic_delete' academic.id %}">Remove</a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-state">No academic records have been added.</div>
+    {% endif %}
+</div>
+</div>
+
+<!-- GOOGLE DRIVE -->
+
+<section class="card detail-card detail-panel drive-card drive-card-compact">
+    <div>
+        <p class="eyebrow">Shared workspace</p>
+        <h3>Google Drive</h3>
+        {% if student.drive_link %}
+            <p>Student documents are stored in Google Drive.</p>
+        {% else %}
+            <p>No Google Drive link added.</p>
+        {% endif %}
+    </div>
+    {% if student.drive_link %}
+        <a class="button" href="{{ student.drive_link }}" target="_blank" rel="noopener noreferrer">Open student drive ↗</a>
+    {% endif %}
+</section>
+
+<!-- DOCUMENTS -->
+
+<section class="card detail-card detail-panel documents-full-width">
+
+    <div class="section-heading"><div><p class="eyebrow">Application materials</p><h3>Documents</h3></div><a class="button" href="{% url 'agency_document_create' student.id %}">+ Add document</a></div>
+
+
+    {% if documents %}
+        <div class="table-wrap agency-document-table">
+            <table>
+                <thead>
+                    <tr><th>Document</th><th>Requirement</th><th>Status</th><th>Priority</th><th>Actions</th></tr>
+                </thead>
+                <tbody>
+                    {% for document in documents %}
+                        <tr>
+                            <td><strong>{{ document.name }}</strong>{% if document.note %}<br><small>{{ document.note }}</small>{% endif %}</td>
+                            <td>{% if document.required %}<span class="status-pill danger">Required</span>{% else %}<span class="status-pill">Optional</span>{% endif %}</td>
+                            <td>{% if document.received %}<span class="status-pill success">Received</span>{% else %}<span class="status-pill warning">Missing</span>{% endif %}</td>
+                            <td>{% if document.priority == "urgent" %}<span class="status-pill danger">Urgent</span>{% else %}<span class="status-pill">Normal</span>{% endif %}</td>
+                            <td><div class="inline-actions"><a class="button-ghost" href="{% url 'agency_document_edit' document.id %}">Edit</a><a class="remove-record" href="{% url 'agency_document_delete' document.id %}">Remove</a></div></td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        {% if documents.has_other_pages %}
+            <nav class="pagination" aria-label="Document pages">
+                {% if documents.has_previous %}<a href="?page={{ documents.previous_page_number }}">Previous</a>{% endif %}
+                <span class="current">Page {{ documents.number }} of {{ documents.paginator.num_pages }}</span>
+                {% if documents.has_next %}<a href="?page={{ documents.next_page_number }}">Next</a>{% endif %}
+            </nav>
+        {% endif %}
+    {% else %}<div class="empty-state">No documents added.</div>{% endif %}
+
+
+    <a class="button button-secondary documents-manage-button" href="{% url 'documents' %}">
+        Manage documents →
+    </a>
+
+</section>
+
+<!-- TIMELINE -->
+
+<div class="detail-grid detail-grid-spaced">
+<div class="card detail-card detail-panel">
+
+    <div class="section-heading"><div><p class="eyebrow">Application history</p><h3>Timeline</h3></div><a class="button" href="{% url 'agency_timeline_create' student.id %}">+ Add event</a></div>
+
+
+    {% if timeline %}
+
+        {% for event in timeline %}
+
+            <div class="agency-timeline-row">
+
+                <!-- EVENT STATUS -->
+
+                {% if event.is_completed %}
+
+                    <span
+                        style="
+                            color: #16a34a;
+                            font-weight: 600;
+                        "
+                    >
+                        ✓
+                    </span>
+
+                {% else %}
+
+                    <span
+                        style="
+                            color: #f59e0b;
+                            font-weight: 600;
+                        "
+                    >
+                        →
+                    </span>
+
+                {% endif %}
+
+
+                <!-- EVENT TITLE -->
+
+                <strong>
+                    {{ event.title }}
+                </strong>
+
+
+                <!-- EVENT DESCRIPTION -->
+
+                {% if event.description %}
+
+                    <p>
+                        {{ event.description }}
+                    </p>
+
+                {% endif %}
+
+
+                <!-- EVENT DATE -->
+
+                <small>
+                    {{ event.event_date|date:"d M Y, h:i A" }}
+                </small>
+
+                <div class="inline-actions">
+                    <a class="button-ghost" href="{% url 'agency_timeline_edit' event.id %}">Edit</a>
+                    <a class="remove-record" href="{% url 'agency_timeline_delete' event.id %}">Remove</a>
+                </div>
+
+            </div>
+
+        {% endfor %}
+
+
+    {% else %}
+
+        <p>
+            No timeline events.
+        </p>
+
+    {% endif %}
+
+
+    <a class="button button-secondary timeline-manage-button" href="{% url 'progress' %}">
+        View full timeline →
+    </a>
+
+</div>
+
+
+<!-- STATUS UPDATE -->
+
+<div class="card detail-card detail-panel update-panel" id="status-update">
+
+    <h3>
+        Update Application
+    </h3>
+
+
+    <p
+        style="
+            color: #64748b;
+            margin-bottom: 20px;
+        "
+    >
+        Update the student's current application status,
+        progress and next step.
+    </p>
+
+
+    <form method="POST" class="stack detail-update-form">
+
+        {% csrf_token %}
+
+
+        {{ form.as_p }}
+
+
+        <button type="submit">
+            Save application update
+        </button>
+
+    </form>
+
+</div>
+</div>
+
+
+</div>
+
+{% endblock %}

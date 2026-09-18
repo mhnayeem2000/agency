@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+
+{% block title %}
+Add Academic Information
+{% endblock %}
+
+
+{% block content %}
+
+<div class="academic-form-layout">
+    <div class="page-heading">
+        <div>
+            <p class="eyebrow">Student profile</p>
+            <h1>Add education</h1>
+            <p class="muted">Add one academic record at a time. You can update your profile later.</p>
+        </div>
+    </div>
+
+    <div class="card academic-form-card">
+        <form method="POST" class="stack">
+            {% csrf_token %}
+            <div class="academic-form-grid">
+                <div class="field-group">
+                    <label for="id_level">Education level</label>
+                    {{ form.level }}
+                    {{ form.level.errors }}
+                </div>
+
+                <div class="field-group">
+                    <label for="id_institution">Institution</label>
+                    {{ form.institution }}
+                    {{ form.institution.errors }}
+                </div>
+
+                <div class="field-group">
+                    <label for="id_subject_or_group">Subject or group</label>
+                    {{ form.subject_or_group }}
+                    {{ form.subject_or_group.errors }}
+                </div>
+
+                <div class="field-group">
+                    <label for="id_passing_year">Passing year</label>
+                    {{ form.passing_year }}
+                    {{ form.passing_year.errors }}
+                </div>
+
+                <div class="field-group">
+                    <label for="id_result">Result</label>
+                    {{ form.result }}
+                    {{ form.result.errors }}
+                </div>
+
+                <div class="field-group field-wide">
+                    <label for="id_certificate_note">Certificate note</label>
+                    {{ form.certificate_note }}
+                    {{ form.certificate_note.errors }}
+                    <small class="helptext">Add any additional information about this academic record.</small>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit">Save academic record</button>
+                <a class="button button-secondary" href="{% url 'profile' %}">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

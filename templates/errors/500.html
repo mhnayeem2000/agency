@@ -1,0 +1,11 @@
+{% extends "errors/error_base.html" %}
+{% block title %}Server error | Student Agency{% endblock %}
+{% block content %}
+<section class="error-card">
+    <p class="error-note">Temporary interruption</p>
+    <p class="error-code">500</p>
+    <h1>Something went wrong on our side.</h1>
+    <p>Your information is safe. Please try again in a moment, or return to the home page.</p>
+    <div class="error-actions"><a class="button" href="/">Go to home</a><a class="button button-secondary" href="javascript:location.reload()">Try again</a></div>
+</section>
+{% endblock %}

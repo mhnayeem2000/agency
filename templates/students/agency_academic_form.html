@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}{% if academic %}Edit academic record{% else %}Add academic record{% endif %}{% endblock %}
+
+{% block content %}
+<div class="agency-form-layout">
+    <div class="page-heading">
+        <div>
+            <p class="eyebrow">{{ student.full_name|default:student.user.username }}</p>
+            <h1>{% if academic %}Edit academic record{% else %}Add academic record{% endif %}</h1>
+            <p class="muted">Keep this student's education history complete and accurate.</p>
+        </div>
+    </div>
+    <section class="card agency-form-card">
+        <form method="POST" class="stack">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <div class="form-actions">
+                <button type="submit">{% if academic %}Save record{% else %}Add record{% endif %}</button>
+                <a class="button button-secondary" href="{% url 'agency_student_detail' student.id %}">Cancel</a>
+            </div>
+        </form>
+    </section>
+</div>
+{% endblock %}

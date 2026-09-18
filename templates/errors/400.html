@@ -1,0 +1,11 @@
+{% extends "errors/error_base.html" %}
+{% block title %}Bad request | Student Agency{% endblock %}
+{% block content %}
+<section class="error-card">
+    <p class="error-note">Request could not be understood</p>
+    <p class="error-code">400</p>
+    <h1>That request was not quite right.</h1>
+    <p>Something about the request was incomplete or invalid. Please try again from the page you were using.</p>
+    <div class="error-actions"><a class="button" href="/">Go to home</a><a class="button button-secondary" href="javascript:history.back()">Go back</a></div>
+</section>
+{% endblock %}

@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+
+{% block title %}
+Student Profile
+{% endblock %}
+
+
+{% block content %}
+
+<div class="page-heading">
+    <div>
+        <p class="eyebrow">Your information</p>
+        <h1>Student profile</h1>
+        <p class="muted">Keep your personal and academic details current for a smoother application.</p>
+    </div>
+</div>
+
+<div class="grid-2 profile-grid">
+    <section class="card profile-form-card">
+        <div class="section-heading"><div><p class="eyebrow">Personal details</p><h3>Basic information</h3></div></div>
+        <form method="POST" class="stack">
+            {% csrf_token %}
+            <div class="profile-form-grid">
+                <div class="field-group field-wide"><label for="id_full_name">Full name</label>{{ form.full_name }}{{ form.full_name.errors }}</div>
+                <div class="field-group"><label for="id_date_of_birth">Date of birth</label>{{ form.date_of_birth }}{{ form.date_of_birth.errors }}</div>
+                <div class="field-group"><label for="id_gender">Gender</label>{{ form.gender }}{{ form.gender.errors }}</div>
+                <div class="field-group"><label for="id_passport_number">Passport number</label>{{ form.passport_number }}{{ form.passport_number.errors }}</div>
+                <div class="field-group"><label for="id_passport_expiry">Passport expiry</label>{{ form.passport_expiry }}{{ form.passport_expiry.errors }}</div>
+                <div class="field-group field-wide"><label for="id_address">Address</label>{{ form.address }}{{ form.address.errors }}</div>
+                <div class="field-group"><label for="id_city">City</label>{{ form.city }}{{ form.city.errors }}</div>
+                <div class="field-group"><label for="id_country">Country</label>{{ form.country }}{{ form.country.errors }}</div>
+                <div class="field-group field-wide"><label for="id_drive_link">Google Drive link</label>{{ form.drive_link }}{{ form.drive_link.errors }}</div>
+                <div class="field-group"><label for="id_destination_country">Destination country</label>{{ form.destination_country }}{{ form.destination_country.errors }}</div>
+                <div class="field-group"><label for="id_university">University</label>{{ form.university }}{{ form.university.errors }}</div>
+                <div class="field-group"><label for="id_course">Course</label>{{ form.course }}{{ form.course.errors }}</div>
+                <div class="field-group"><label for="id_intake">Intake</label>{{ form.intake }}{{ form.intake.errors }}</div>
+                <div class="field-group"><label for="id_emergency_contact_name">Emergency contact name</label>{{ form.emergency_contact_name }}{{ form.emergency_contact_name.errors }}</div>
+                <div class="field-group"><label for="id_emergency_contact_phone">Emergency contact phone</label>{{ form.emergency_contact_phone }}{{ form.emergency_contact_phone.errors }}</div>
+                <div class="field-group field-wide"><label for="id_emergency_contact_relation">Emergency contact relation</label>{{ form.emergency_contact_relation }}{{ form.emergency_contact_relation.errors }}</div>
+            </div>
+            <button type="submit">Save profile</button>
+        </form>
+    </section>
+</div>
+
+<section class="card academic-section">
+    <div class="section-heading"><div><p class="eyebrow">Academic record</p><h3>Education</h3><p class="muted">Add your academic background below your personal details.</p></div><a class="button" href="{% url 'academic_add' %}">Add academic record</a></div>
+    {% if profile.academic_records.exists %}
+        <div class="academic-grid">
+            {% for academic in profile.academic_records.all %}
+                <div class="academic-item">
+                    <div class="academic-item-content">
+                        <div class="academic-item-meta">
+                            <span class="status-pill">{{ academic.get_level_display }}</span>
+                            {% if academic.passing_year %}<span>{{ academic.passing_year }}</span>{% endif %}
+                        </div>
+                        <h4>{{ academic.institution }}</h4>
+                        <p>{% if academic.subject_or_group %}{{ academic.subject_or_group }}{% else %}Subject or group not added{% endif %}</p>
+                        <p>{% if academic.result %}Result: {{ academic.result }}{% else %}Result not added{% endif %}</p>
+                    </div>
+                    <a class="remove-record" href="{% url 'academic_delete' academic.id %}">Remove</a>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}<div class="empty-state">No academic information added yet. Add your first record to complete your profile.</div>{% endif %}
+</section>
+
+
+{% endblock %}

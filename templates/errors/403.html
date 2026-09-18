@@ -1,0 +1,11 @@
+{% extends "errors/error_base.html" %}
+{% block title %}Access denied | Student Agency{% endblock %}
+{% block content %}
+<section class="error-card">
+    <p class="error-note">Permission required</p>
+    <p class="error-code">403</p>
+    <h1>You do not have access to this page.</h1>
+    <p>This area is reserved for an authorized student agency staff member or administrator.</p>
+    <div class="error-actions"><a class="button" href="/">Go to home</a><a class="button button-secondary" href="/accounts/login/">Sign in</a></div>
+</section>
+{% endblock %}

@@ -1,0 +1,19 @@
+{
+  "name": "Student Agency",
+  "short_name": "Student Agency",
+  "description": "Manage your student application journey, documents, and updates.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#f7f9fc",
+  "theme_color": "#172033",
+  "icons": [
+    {
+      "src": "/static/pwa/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

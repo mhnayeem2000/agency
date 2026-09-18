@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+
+{% block title %}
+Documents
+{% endblock %}
+
+
+{% block content %}
+
+<div class="page-heading">
+    <div><p class="eyebrow">Application materials</p><h1>Document checklist</h1><p class="muted">Keep track of everything your agency needs from you.</p></div>
+</div>
+
+<div class="grid-2 documents-layout">
+    <section class="card">
+        <div class="section-heading"><div><p class="eyebrow">Your checklist</p><h3>Documents</h3></div><span class="status-pill">{{ documents|length }} items</span></div>
+        {% if documents %}
+            <div class="item-list">
+                {% for document in documents %}
+                    <div class="document-row">
+                        <div><strong>{{ document.name }}</strong><div class="document-meta">{% if document.required %}Required{% else %}Optional{% endif %}{% if document.note %} · {{ document.note }}{% endif %}</div></div>
+                        {% if document.received %}<span class="status-pill success">Received</span>{% elif document.priority == "urgent" %}<span class="status-pill danger">Urgent</span>{% else %}<span class="status-pill warning">Pending</span>{% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}<div class="empty-state">No documents have been added yet.</div>{% endif %}
+    </section>
+
+    <section class="card drive-card">
+        <p class="eyebrow">Shared workspace</p>
+        <h3>Google Drive</h3>
+        <p>Your submitted documents are stored securely in your Google Drive folder.</p>
+        {% if profile.drive_link %}<a class="button" href="{{ profile.drive_link }}" target="_blank" rel="noopener noreferrer">Open Google Drive ↗</a>{% else %}<div class="empty-state">Your Google Drive link has not been added yet.</div>{% endif %}
+    </section>
+</div>
+
+{% endblock %}

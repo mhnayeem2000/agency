@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block title %}
+Home
+{% endblock %}
+
+
+{% block content %}
+
+<section class="hero-panel reveal">
+    <div class="hero-copy">
+        <p class="eyebrow">Student Agency / Your next chapter</p>
+        <h1>Your future abroad,<br><span>carefully prepared.</span></h1>
+        <p class="hero-lead">From your first university shortlist to visa preparation, Student Agency gives Bangladeshi students a clear path, practical support, and a team that stays with them.</p>
+        <div class="hero-actions">
+            {% if user.is_authenticated %}
+                <a class="button" href="{% url 'profile' %}">Start your journey</a>
+            {% else %}
+                <a class="button" href="{% url 'register' %}">Start your journey</a>
+            {% endif %}
+            <a class="button button-secondary" href="#our-goal">See how we help</a>
+        </div>
+    </div>
+    <div class="hero-aside">
+        <div class="hero-orbit"><span>SA</span></div>
+        <p class="hero-aside-label">A better way to go abroad</p>
+        <strong>One team. Every next step.</strong>
+        <small>Applications, documents, guidance, and visa readiness in one focused place.</small>
+    </div>
+</section>
+
+<div class="grid-3 home-features">
+    <div class="stat-card home-feature-card reveal">
+        <span class="feature-number">01</span>
+        <h3>University applications</h3>
+        <p>Find the right course and build a stronger application with guidance that fits your goals.</p>
+    </div>
+    <div class="stat-card home-feature-card reveal">
+        <span class="feature-number">02</span>
+        <h3>Visa preparation</h3>
+        <p>Prepare your documents, confidence, and interview answers before the important day arrives.</p>
+    </div>
+    <div class="stat-card home-feature-card reveal">
+        <span class="feature-number">03</span>
+        <h3>Support that stays</h3>
+        <p>Get clear updates and human help through every milestone, from shortlist to departure.</p>
+    </div>
+</div>
+
+<section class="home-section reveal" id="about-us">
+    <div><p class="eyebrow">About Student Agency</p><h2>Ambition deserves a dependable plan.</h2></div>
+    <p>We help students from Bangladesh turn an overseas study dream into a prepared, realistic journey. Our team brings together application support, document planning, and visa preparation so you can move with clarity instead of guesswork.</p>
+</section>
+
+<section class="home-section split-section reveal" id="our-goal">
+    <div><p class="eyebrow">Our goal</p><h2>Make global education feel possible.</h2></div>
+    <div class="goal-list"><p><strong>01 / Understand.</strong> We learn your plans, strengths, budget, and destination goals.</p><p><strong>02 / Prepare.</strong> We turn complex requirements into manageable next steps.</p><p><strong>03 / Move forward.</strong> We keep you informed until you are ready for your next chapter.</p></div>
+</section>
+
+<section class="home-section reveal" id="why-us">
+    <p class="eyebrow">Why choose us</p><h2>Guidance with a human pulse.</h2>
+    <div class="grid-3 reasons-grid"><div class="reason-card"><h3>Local understanding</h3><p>Advice shaped around Bangladeshi students and real application journeys.</p></div><div class="reason-card"><h3>Clear communication</h3><p>No confusing handoffs. Your progress and next action stay visible.</p></div><div class="reason-card"><h3>End-to-end care</h3><p>University applications and visa preparation connected in one experience.</p></div></div>
+</section>
+
+<section class="home-section faq-section reveal" id="faq">
+    <p class="eyebrow">FAQ</p><h2>Good questions deserve clear answers.</h2>
+    <details><summary>What can Student Agency help me with?</summary><p>We support course and university selection, application preparation, document planning, application progress, and visa interview preparation.</p></details>
+    <details><summary>Do you support students applying from Bangladesh?</summary><p>Yes. Our service is designed around the practical needs of Bangladeshi students planning to study abroad.</p></details>
+    <details><summary>How do I get started?</summary><p>Create your account, complete your profile, and our team can guide you through the next steps.</p></details>
+</section>
+
+{% endblock %}

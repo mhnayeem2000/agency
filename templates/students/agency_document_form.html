@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}{% if document %}Edit document{% else %}Add document{% endif %}{% endblock %}
+
+{% block content %}
+<div class="agency-form-layout">
+    <div class="page-heading">
+        <div>
+            <p class="eyebrow">{{ student.full_name|default:student.user.username }}</p>
+            <h1>{% if document %}Edit document{% else %}Add document{% endif %}</h1>
+            <p class="muted">Keep this student's document checklist accurate.</p>
+        </div>
+    </div>
+    <section class="card agency-form-card">
+        <form method="POST" class="stack">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <div class="form-actions">
+                <button type="submit">{% if document %}Save document{% else %}Add document{% endif %}</button>
+                <a class="button button-secondary" href="{% if application %}{% url 'agency_application_detail' application.id %}{% else %}{% url 'agency_student_detail' student.id %}{% endif %}">Cancel</a>
+            </div>
+        </form>
+    </section>
+</div>
+{% endblock %}

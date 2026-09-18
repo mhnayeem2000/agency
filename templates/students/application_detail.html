@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block title %}{{ application.university }} | Application{% endblock %}
+
+{% block content %}
+<div class="agency-detail-page">
+    <div class="detail-header">
+        <div>
+            <a class="button-ghost" href="{% url 'dashboard' %}">← Back to dashboard</a>
+            <p class="eyebrow" style="margin-top: 22px;">Application file</p>
+            <h1>{{ application.university }}</h1>
+            <p class="muted">{{ application.destination_country }} · {{ application.course }}{% if application.intake %} · {{ application.intake }}{% endif %}</p>
+        </div>
+        <span class="status-pill">{{ application.get_current_status_display }}</span>
+    </div>
+
+    <div class="progress-hero card">
+        <div><p class="eyebrow">Current status</p><h2>{{ application.get_current_status_display }}</h2><p>{% if application.next_step %}Next up: {{ application.next_step }}{% else %}Your agency will share the next step here.{% endif %}</p></div>
+        <div class="progress-score"><strong>{{ application.progress }}%</strong><span>complete</span></div>
+        <progress class="application-progress" value="{{ application.progress }}" max="100">{{ application.progress }}%</progress>
+    </div>
+
+    <div class="detail-grid">
+        <section class="card detail-panel">
+            <div class="section-heading"><div><p class="eyebrow">Application materials</p><h3>Documents</h3></div></div>
+            {% if documents %}<div class="item-list">{% for document in documents %}<div class="list-item"><strong>{{ document.name }}</strong>{% if document.received %}<span class="status-pill success">Received</span>{% else %}<span class="status-pill warning">Pending</span>{% endif %}</div>{% endfor %}</div>{% else %}<div class="empty-state">No documents have been assigned to this application yet.</div>{% endif %}
+        </section>
+        <section class="card detail-panel">
+            <div class="section-heading"><div><p class="eyebrow">Application history</p><h3>Timeline</h3></div></div>
+            {% if timeline %}<div class="timeline-list">{% for event in timeline %}<div class="timeline-row"><span class="timeline-dot {% if event.is_completed %}complete{% endif %}"></span><div><strong>{{ event.title }}</strong><p>{{ event.description }}</p><small>{{ event.event_date|date:"d M Y, h:i A" }}</small></div></div>{% endfor %}</div>{% else %}<div class="empty-state">No updates have been added yet.</div>{% endif %}
+        </section>
+    </div>
+</div>
+{% endblock %}

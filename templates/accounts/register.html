@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block title %}
+Register
+{% endblock %}
+
+
+{% block content %}
+
+<div class="register-layout">
+    <aside class="register-aside">
+        <p class="eyebrow">Start with clarity</p>
+        <h1>Your next step<br>starts here.</h1>
+        <p>Create your account and give your application a single, reliable home.</p>
+        <div class="auth-note"><span>✦</span> Built for students, guided by your agency.</div>
+    </aside>
+    <section class="auth-card card register-form-panel">
+        <div class="auth-card-heading">
+            <span class="brand-mark">SA</span>
+            <div>
+                <h2>Create account</h2>
+                <p>It only takes a minute to get started.</p>
+            </div>
+        </div>
+        <form method="POST" class="stack">
+            {% csrf_token %}
+            <div class="register-form-grid">
+                <div class="field-group"><label for="id_username">Username</label>{{ form.username }}{{ form.username.errors }}{% if form.username.help_text %}<small class="helptext">{{ form.username.help_text }}</small>{% endif %}</div>
+                <div class="field-group"><label for="id_email">Email</label>{{ form.email }}{{ form.email.errors }}</div>
+                <div class="field-group"><label for="id_first_name">First name</label>{{ form.first_name }}{{ form.first_name.errors }}</div>
+                <div class="field-group"><label for="id_last_name">Last name</label>{{ form.last_name }}{{ form.last_name.errors }}</div>
+                <div class="field-group field-wide"><label for="id_phone">Phone</label>{{ form.phone }}{{ form.phone.errors }}</div>
+                <div class="field-group"><label for="id_password1">Password</label>{{ form.password1 }}{{ form.password1.errors }}{% if form.password1.help_text %}<small class="helptext">{{ form.password1.help_text }}</small>{% endif %}</div>
+                <div class="field-group"><label for="id_password2">Confirm password</label>{{ form.password2 }}{{ form.password2.errors }}</div>
+            </div>
+            <button type="submit">Create student account</button>
+        </form>
+        <p class="auth-footer">Already have an account? <a href="{% url 'login' %}">Sign in</a></p>
+    </section>
+</div>
+
+{% endblock %}

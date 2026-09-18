@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block title %}{{ application.university }} | {{ student.full_name }}{% endblock %}
+
+{% block content %}
+<div class="agency-detail-page agency-application-page">
+    <div class="detail-header">
+        <div>
+            <div class="detail-actions"><a class="button-ghost" href="{% url 'agency_student_detail' student.id %}">← Student file</a><a class="button button-secondary" href="{% url 'agency_application_edit' application.id %}">Edit application</a><a class="remove-record" href="{% url 'agency_application_delete' application.id %}">Remove application</a></div>
+            <p class="eyebrow" style="margin-top: 22px;">{{ student.full_name|default:student.user.username }}</p>
+            <h1>{{ application.university }}</h1>
+            <p class="muted">{{ application.destination_country }} · {{ application.course }}{% if application.intake %} · {{ application.intake }}{% endif %}</p>
+        </div>
+        <span class="status-pill">{{ application.get_current_status_display }}</span>
+    </div>
+
+    <div class="detail-grid">
+        <section class="card detail-panel status-panel">
+            <h3>Application status</h3>
+            <p><strong>Status:</strong> {{ application.get_current_status_display }}</p>
+            <p><strong>Progress:</strong> {{ application.progress }}%</p>
+            <progress class="application-progress" value="{{ application.progress }}" max="100">{{ application.progress }}%</progress>
+            <p><strong>Next step:</strong> {{ application.next_step|default:"Not set yet" }}</p>
+        </section>
+        <section class="card drive-card detail-panel">
+            <p class="eyebrow">Application destination</p>
+            <h3>{{ application.university }}</h3>
+            <p>{{ application.destination_country }} · {{ application.course }}</p>
+            {% if application.drive_link %}<a class="button" href="{{ application.drive_link }}" target="_blank" rel="noopener noreferrer">Open application drive ↗</a>{% else %}<p>No application-specific Drive link added.</p>{% endif %}
+        </section>
+    </div>
+
+    <div class="detail-grid detail-grid-spaced">
+        <section class="card detail-panel">
+            <div class="section-heading"><div><p class="eyebrow">This application</p><h3>Documents</h3></div><a class="button" href="{% url 'agency_application_document_create' application.id %}">+ Add document</a></div>
+            {% if documents %}<div class="table-wrap agency-document-table"><table><thead><tr><th>Document</th><th>Status</th><th>Priority</th></tr></thead><tbody>{% for document in documents %}<tr><td><strong>{{ document.name }}</strong></td><td>{% if document.received %}<span class="status-pill success">Received</span>{% else %}<span class="status-pill warning">Missing</span>{% endif %}</td><td>{% if document.priority == "urgent" %}<span class="status-pill danger">Urgent</span>{% else %}<span class="status-pill">Normal</span>{% endif %}</td></tr>{% endfor %}</tbody></table></div>{% else %}<div class="empty-state">No documents assigned to this application.</div>{% endif %}
+            {% if documents.has_other_pages %}<nav class="pagination"><span class="current">Page {{ documents.number }} of {{ documents.paginator.num_pages }}</span>{% if documents.has_next %}<a href="?page={{ documents.next_page_number }}">Next</a>{% endif %}</nav>{% endif %}
+        </section>
+        <section class="card detail-panel">
+            <div class="section-heading"><div><p class="eyebrow">This application</p><h3>Timeline</h3></div><a class="button" href="{% url 'agency_application_timeline_create' application.id %}">+ Add event</a></div>
+            {% if timeline %}<div class="timeline-list">{% for event in timeline %}<div class="timeline-row"><span class="timeline-dot {% if event.is_completed %}complete{% endif %}"></span><div><strong>{{ event.title }}</strong><p>{{ event.description }}</p><small>{{ event.event_date|date:"d M Y, h:i A" }}</small></div></div>{% endfor %}</div>{% else %}<div class="empty-state">No updates assigned to this application.</div>{% endif %}
+        </section>
+    </div>
+</div>
+{% endblock %}

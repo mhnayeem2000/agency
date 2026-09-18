@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}{% if application %}Edit application{% else %}Add application{% endif %}{% endblock %}
+
+{% block content %}
+<div class="agency-form-layout">
+    <div class="page-heading">
+        <div>
+            <p class="eyebrow">{{ student.full_name|default:student.user.username }}</p>
+            <h1>{% if application %}Edit application file{% else %}New application file{% endif %}</h1>
+            <p class="muted">Track one country, university, and subject combination independently.</p>
+        </div>
+    </div>
+    <section class="card agency-form-card">
+        <form method="POST" class="stack">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <div class="form-actions">
+                <button type="submit">{% if application %}Save application{% else %}Create application{% endif %}</button>
+                <a class="button button-secondary" href="{% if application %}{% url 'agency_application_detail' application.id %}{% else %}{% url 'agency_student_detail' student.id %}{% endif %}">Cancel</a>
+            </div>
+        </form>
+    </section>
+</div>
+{% endblock %}

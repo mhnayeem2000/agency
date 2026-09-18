@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+
+{% block title %}
+Notifications
+{% endblock %}
+
+
+{% block content %}
+
+<div class="page-heading"><div><p class="eyebrow">Stay up to date</p><h1>Notifications</h1><p class="muted">Updates from your agency, in one quiet place.</p></div><span class="status-pill">{{ unread_notification_count }} unread</span></div>
+
+<section class="card notification-list">
+    {% if notifications %}
+        <div class="notification-feed">
+            {% for notification in notifications %}
+                <a class="notification-card {% if not notification.is_read %}unread{% endif %}" href="{% url 'notification_read' notification.id %}">
+                    <div class="notification-card-header">
+                        <div class="notification-title-wrap">
+                            {% if not notification.is_read %}<span class="notification-unread-dot" aria-label="Unread"></span>{% endif %}
+                            <strong>{{ notification.title }}</strong>
+                        </div>
+                        <time class="notification-date" datetime="{{ notification.created_at|date:'c' }}">
+                            <span>{{ notification.created_at|date:"d M Y" }}</span>
+                            <small>{{ notification.created_at|date:"h:i A" }}</small>
+                        </time>
+                    </div>
+                    <div class="notification-message">
+                        <span class="notification-label">Agency update</span>
+                        <p>{{ notification.message|linebreaksbr }}</p>
+                    </div>
+                    {% if not notification.is_read %}<span class="notification-action">Click to mark as read <span aria-hidden="true">&#8594;</span></span>{% endif %}
+                </a>
+            {% endfor %}
+        </div>
+    {% else %}<div class="empty-state">You are all caught up. New updates will appear here.</div>{% endif %}
+</section>
+
+{% endblock %}

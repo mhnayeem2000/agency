@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %}Remove {{ object_type }}{% endblock %}
+
+{% block content %}
+<div class="narrow-layout">
+    <section class="card confirmation-card">
+        <p class="eyebrow">Staff workspace</p>
+        <h1>Remove {{ object_type }}?</h1>
+        <p>This action cannot be undone.</p>
+        <strong>{{ object }}</strong>
+        <form method="POST" class="form-actions">
+            {% csrf_token %}
+            <button class="button-danger" type="submit">Remove permanently</button>
+            <a class="button button-secondary" href="{% url cancel_url cancel_pk %}">Cancel</a>
+        </form>
+    </section>
+</div>
+{% endblock %}
