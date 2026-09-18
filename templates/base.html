@@ -4,12 +4,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#172033">
+    <meta name="theme-color" content="#ffffff">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="manifest" href="{% url 'manifest' %}">
-    <link rel="icon" href="{% static 'pwa/icon.svg' %}" type="image/svg+xml">
+    <link rel="icon" href="{% static 'pwa/icon.png' %}" type="image/png">
+    <link rel="apple-touch-icon" href="{% static 'pwa/icon.png' %}">
 
     <title>{% block title %}Student Agency{% endblock %}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -21,7 +22,7 @@
             --ink: #172033;
             --muted: #667085;
             --line: #e6eaf0;
-            --canvas: #f7f9fc;
+            --canvas: #ffffff;
             --surface: #ffffff;
             --blue: #2563eb;
             --blue-dark: #1d4ed8;
@@ -37,7 +38,7 @@
         }
 
         body {
-            background: var(--canvas);
+            background: #ffffff;
             color: var(--ink);
             font-family: "DM Sans", "Segoe UI", sans-serif;
             line-height: 1.55;
@@ -46,7 +47,7 @@
 
         .navbar {
             align-items: center;
-            background: var(--surface);
+            background: #ffffff;
             border-bottom: 1px solid var(--line);
             display: flex;
             gap: 18px;
@@ -66,6 +67,14 @@
             gap: 10px;
             margin-right: auto;
             text-decoration: none;
+        }
+
+        .brand-logo {
+            display: block;
+            height: 42px;
+            max-width: min(220px, 42vw);
+            object-fit: contain;
+            object-position: left center;
         }
 
         .brand-mark {
@@ -2388,8 +2397,7 @@
 
 <nav class="navbar">
     <a class="brand" href="/">
-        <span class="brand-mark">SA</span>
-        <span>Student Agency</span>
+        <img class="brand-logo" src="{% static 'images/globalHlogo.png' %}" alt="Global EduLink">
     </a>
 
     <button class="menu-toggle" type="button" aria-label="Open navigation menu" aria-expanded="false" aria-controls="primary-navigation">
