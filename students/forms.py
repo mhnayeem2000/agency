@@ -118,7 +118,6 @@ class ApplicationStatusForm(forms.ModelForm):
 
         fields = (
             "current_status",
-            "progress",
             "next_step",
         )
 
@@ -210,7 +209,6 @@ class StudentApplicationForm(forms.ModelForm):
             "intake",
             "drive_link",
             "current_status",
-            "progress",
             "next_step",
         )
 

@@ -3,6 +3,7 @@ from django.urls import path
 from .views import (
     agency_dashboard_view,
     agency_student_detail_view,
+    agency_student_agreement_download_view,
     agency_student_create_view,
     agency_student_edit_view,
     agency_student_delete_view,
@@ -22,6 +23,7 @@ from .views import (
     agency_application_document_create_view,
     agency_application_timeline_create_view,
     profile_view,
+    student_agreement_download_view,
     academic_add_view,
     academic_delete_view,
     documents_view,
@@ -40,6 +42,12 @@ urlpatterns = [
         "profile/",
         profile_view,
         name="profile"
+    ),
+
+    path(
+        "profile/agreement/download/",
+        student_agreement_download_view,
+        name="student_agreement_download",
     ),
 
     path(
@@ -94,6 +102,7 @@ path(
 
     path("agency/student/add/", agency_student_create_view, name="agency_student_create"),
     path("agency/student/<int:pk>/edit/", agency_student_edit_view, name="agency_student_edit"),
+    path("agency/student/<int:pk>/agreement/download/", agency_student_agreement_download_view, name="agency_student_agreement_download"),
     path("agency/student/<int:pk>/delete/", agency_student_delete_view, name="agency_student_delete"),
     path("agency/student/<int:student_pk>/document/add/", agency_document_create_view, name="agency_document_create"),
     path("agency/document/<int:pk>/edit/", agency_document_edit_view, name="agency_document_edit"),

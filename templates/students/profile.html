@@ -18,7 +18,13 @@ Student Profile
 
 <div class="grid-2 profile-grid">
     <section class="card profile-form-card">
-        <div class="section-heading"><div><p class="eyebrow">Personal details</p><h3>Basic information</h3></div></div>
+        <div class="section-heading profile-information-heading"><div><p class="eyebrow">Personal details</p><h3>Basic information</h3></div>
+            {% if agreement_ready %}
+                <a class="button" href="{% url 'student_agreement_download' %}">Download agreement PDF</a>
+            {% else %}
+                <span class="status-pill warning" title="Complete and save your identity and emergency contact details first">Complete profile to download</span>
+            {% endif %}
+        </div>
         <form method="POST" class="stack">
             {% csrf_token %}
             <div class="profile-form-grid">

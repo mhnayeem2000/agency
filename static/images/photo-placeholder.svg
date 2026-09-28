@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" role="img" aria-label="Study abroad placeholder">
+    <defs>
+        <linearGradient id="agency-placeholder" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#16244a"/>
+            <stop offset="0.52" stop-color="#2450a8"/>
+            <stop offset="1" stop-color="#2fb9a1"/>
+        </linearGradient>
+    </defs>
+    <rect width="800" height="600" fill="url(#agency-placeholder)"/>
+    <g fill="rgba(255,255,255,.13)">
+        <circle cx="664" cy="112" r="104"/>
+        <circle cx="112" cy="516" r="132"/>
+        <circle cx="700" cy="520" r="72"/>
+    </g>
+    <g fill="none" stroke="rgba(255,255,255,.9)" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" transform="translate(304,196) scale(8)">
+        <path d="M3 9.2 12 4.8l9 4.4-9 4.4-9-4.4Z"/>
+        <path d="M6.6 11.4V16c0 1.4 2.4 2.6 5.4 2.6s5.4-1.2 5.4-2.6v-4.6"/>
+        <path d="M20.4 10.2v5.6"/>
+    </g>
+    <text x="400" y="470" fill="rgba(255,255,255,.82)" font-family="Verdana, Geneva, sans-serif" font-size="30" letter-spacing="6" text-anchor="middle">GLOBAL EDULINK</text>
+</svg>

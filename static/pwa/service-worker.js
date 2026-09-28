@@ -1,7 +1,8 @@
-const CACHE_NAME = "student-agency-v3";
+const CACHE_NAME = "student-agency-v4";
 const APP_SHELL = [
     "/",
     "/static/pwa/manifest.json",
+    "/static/pwa/Appicon.png",
     "/static/pwa/icon.svg",
 ];
 

@@ -1,72 +1,575 @@
 {% extends "base.html" %}
+{% load static %}
 
-{% block title %}
-Home
-{% endblock %}
-
+{% block title %}Global EduLink | Study abroad, made simple{% endblock %}
 
 {% block content %}
+<main class="home-page">
 
-<section class="hero-panel reveal">
-    <div class="hero-copy">
-        <p class="eyebrow">Student Agency / Your next chapter</p>
-        <h1>Your future abroad,<br><span>carefully prepared.</span></h1>
-        <p class="hero-lead">From your first university shortlist to visa preparation, Student Agency gives Bangladeshi students a clear path, practical support, and a team that stays with them.</p>
-        <div class="hero-actions">
-            {% if user.is_authenticated %}
-                <a class="button" href="{% url 'profile' %}">Start your journey</a>
-            {% else %}
-                <a class="button" href="{% url 'register' %}">Start your journey</a>
-            {% endif %}
-            <a class="button button-secondary" href="#our-goal">See how we help</a>
+    {# ---------------- Hero ---------------- #}
+    <section class="home-wrap hx-hero" aria-labelledby="home-title">
+        <div class="hx-hero-card reveal">
+            <div class="hx-hero-copy">
+                <span class="hx-tag"><span class="hx-pulse" aria-hidden="true"></span> Trusted study-abroad guidance since 2014</span>
+                <h1 id="home-title">Study <span class="hx-hero-type" data-type-words="in the UK|in Canada|in Australia|in Germany|in Japan|in Malaysia">in the UK</span><br>with one clear plan.</h1>
+                <p class="hx-hero-lead">From shortlisting the right university to visa-ready documents, our counsellors keep every step organised, transparent and on time &mdash; so you can focus on your next chapter.</p>
+                <div class="hx-hero-actions">
+                    {% if user.is_authenticated %}
+                        <a class="button button--mint" href="{% url 'dashboard' %}">Continue your journey <span aria-hidden="true">&#8594;</span></a>
+                    {% else %}
+                        <a class="button button--mint" href="{% url 'register' %}">Start your journey <span aria-hidden="true">&#8594;</span></a>
+                    {% endif %}
+                    <a class="button button--ghost-light" href="#process">See how it works</a>
+                </div>
+                <ul class="hx-hero-points">
+                    <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> Free profile assessment</li>
+                    <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> 320+ partner universities</li>
+                    <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> Visa interview coaching</li>
+                </ul>
+                <div class="hx-proof">
+                    <div class="hx-avatars" aria-hidden="true"><span>AR</span><span>SK</span><span>MH</span><span>NT</span></div>
+                    <div>
+                        <strong>2,400+ students placed</strong>
+                        <small>98% visa success rate &middot; 18 destinations</small>
+                    </div>
+                </div>
+            </div>
+            <div class="hx-hero-visual">
+                <div class="hx-hero-photo media media--zoom" data-media-label="Campus life">
+                    <img src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&amp;fit=crop&amp;w=900&amp;q=70" alt="Students walking on an international university campus" data-media-fallback>
+                </div>
+                <div class="hx-float hx-float--offer">
+                    <small>Offer letter</small>
+                    <strong>University of Toronto</strong>
+                    <div class="hx-meter" aria-hidden="true"><span></span></div>
+                </div>
+                <div class="hx-float hx-float--visa">
+                    <small>Visa status</small>
+                    <strong>Approved &middot; 14 days</strong>
+                </div>
+            </div>
         </div>
-    </div>
-    <div class="hero-aside">
-        <div class="hero-orbit"><span>SA</span></div>
-        <p class="hero-aside-label">A better way to go abroad</p>
-        <strong>One team. Every next step.</strong>
-        <small>Applications, documents, guidance, and visa readiness in one focused place.</small>
-    </div>
-</section>
 
-<div class="grid-3 home-features">
-    <div class="stat-card home-feature-card reveal">
-        <span class="feature-number">01</span>
-        <h3>University applications</h3>
-        <p>Find the right course and build a stronger application with guidance that fits your goals.</p>
-    </div>
-    <div class="stat-card home-feature-card reveal">
-        <span class="feature-number">02</span>
-        <h3>Visa preparation</h3>
-        <p>Prepare your documents, confidence, and interview answers before the important day arrives.</p>
-    </div>
-    <div class="stat-card home-feature-card reveal">
-        <span class="feature-number">03</span>
-        <h3>Support that stays</h3>
-        <p>Get clear updates and human help through every milestone, from shortlist to departure.</p>
-    </div>
-</div>
+        <div class="hx-stats reveal" aria-label="Our results so far">
+            <div class="hx-stat"><strong data-count="2400" data-count-suffix="+">2,400+</strong><span>Students guided</span></div>
+            <div class="hx-stat"><strong data-count="320" data-count-suffix="+">320+</strong><span>Partner universities</span></div>
+            <div class="hx-stat"><strong data-count="18">18</strong><span>Study destinations</span></div>
+            <div class="hx-stat"><strong data-count="98" data-count-suffix="%">98%</strong><span>Visa success</span></div>
+        </div>
 
-<section class="home-section reveal" id="about-us">
-    <div><p class="eyebrow">About Student Agency</p><h2>Ambition deserves a dependable plan.</h2></div>
-    <p>We help students from Bangladesh turn an overseas study dream into a prepared, realistic journey. Our team brings together application support, document planning, and visa preparation so you can move with clarity instead of guesswork.</p>
-</section>
+        <div class="hx-marquee reveal" aria-label="Universities our students join">
+            <div class="hx-marquee-track">
+                <span>University of Toronto</span><span>Monash University</span><span>University of Manchester</span><span>TU Munich</span><span>Arizona State University</span><span>University of Auckland</span><span>Seoul National University</span><span>University of Birmingham</span><span>Rmit University</span><span>Universidade de Lisboa</span><span>Kyoto University</span><span>University of Warsaw</span>
+                <span aria-hidden="true">University of Toronto</span><span aria-hidden="true">Monash University</span><span aria-hidden="true">University of Manchester</span><span aria-hidden="true">TU Munich</span><span aria-hidden="true">Arizona State University</span><span aria-hidden="true">University of Auckland</span><span aria-hidden="true">Seoul National University</span><span aria-hidden="true">University of Birmingham</span><span aria-hidden="true">Rmit University</span><span aria-hidden="true">Universidade de Lisboa</span><span aria-hidden="true">Kyoto University</span><span aria-hidden="true">University of Warsaw</span>
+            </div>
+        </div>
+    </section>
 
-<section class="home-section split-section reveal" id="our-goal">
-    <div><p class="eyebrow">Our goal</p><h2>Make global education feel possible.</h2></div>
-    <div class="goal-list"><p><strong>01 / Understand.</strong> We learn your plans, strengths, budget, and destination goals.</p><p><strong>02 / Prepare.</strong> We turn complex requirements into manageable next steps.</p><p><strong>03 / Move forward.</strong> We keep you informed until you are ready for your next chapter.</p></div>
-</section>
 
-<section class="home-section reveal" id="why-us">
-    <p class="eyebrow">Why choose us</p><h2>Guidance with a human pulse.</h2>
-    <div class="grid-3 reasons-grid"><div class="reason-card"><h3>Local understanding</h3><p>Advice shaped around Bangladeshi students and real application journeys.</p></div><div class="reason-card"><h3>Clear communication</h3><p>No confusing handoffs. Your progress and next action stay visible.</p></div><div class="reason-card"><h3>End-to-end care</h3><p>University applications and visa preparation connected in one experience.</p></div></div>
-</section>
+    {# ---------------- About / trust ---------------- #}
+    <section class="home-wrap home-section" id="about-us">
+        <div class="hx-about reveal">
+            <div class="hx-about-media">
+                <div class="media media--zoom" data-media-label="Campus teamwork">
+                    <img src="https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&amp;fit=crop&amp;w=900&amp;q=70" alt="Counselling session with students" loading="lazy" decoding="async" data-media-fallback>
+                </div>
+                <div class="media media--zoom" data-media-label="Graduation day">
+                    <img src="https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&amp;fit=crop&amp;w=600&amp;q=70" alt="Graduates celebrating after their degree" loading="lazy" decoding="async" data-media-fallback>
+                </div>
+                <div class="media media--zoom" data-media-label="Campus library">
+                    <img src="https://images.unsplash.com/photo-1541339907198-e08756dedf3f?auto=format&amp;fit=crop&amp;w=600&amp;q=70" alt="Historic university campus building" loading="lazy" decoding="async" data-media-fallback>
+                </div>
+            </div>
+            <div>
+                <p class="section-kicker">What we do</p>
+                <h2>Big ambitions deserve a dependable plan.</h2>
+                <p>Global EduLink helps students turn an overseas study goal into a calm, organised and realistic journey. We match you with universities that genuinely fit your academics and budget, then keep every deadline visible until you land.</p>
+                <ul class="hx-about-list">
+                    <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> One counsellor who knows your file from day one</li>
+                    <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> Transparent timelines with no hidden processing fees</li>
+                    <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> Real-time progress tracking inside your student account</li>
+                </ul>
+                <div class="hx-about-badges">
+                    <span>British Council trained</span>
+                    <span>ICEF certified</span>
+                    <span>Since 2014</span>
+                    <span>Dhaka &middot; Chattogram</span>
+                </div>
+                <div class="hx-instructor">
+                    <div class="hx-avatars" aria-hidden="true"><span>FN</span><span>RH</span><span>TS</span></div>
+                    <div>
+                        <strong>Guidance from 14 senior counsellors</strong>
+                        <small>Average 9 years of admissions experience</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-<section class="home-section faq-section reveal" id="faq">
-    <p class="eyebrow">FAQ</p><h2>Good questions deserve clear answers.</h2>
-    <details><summary>What can Student Agency help me with?</summary><p>We support course and university selection, application preparation, document planning, application progress, and visa interview preparation.</p></details>
-    <details><summary>Do you support students applying from Bangladesh?</summary><p>Yes. Our service is designed around the practical needs of Bangladeshi students planning to study abroad.</p></details>
-    <details><summary>How do I get started?</summary><p>Create your account, complete your profile, and our team can guide you through the next steps.</p></details>
-</section>
 
+    {# ---------------- Destinations slider ---------------- #}
+    <section class="home-wrap home-section" id="destinations">
+        <div class="hx-head reveal">
+            <div>
+                <p class="section-kicker">Popular destinations</p>
+                <h2>Where will your degree take you?</h2>
+                <p>Compare tuition, intakes and post-study work options across the countries our students choose most.</p>
+            </div>
+            <div class="hx-head-side">
+                <p>Based on our last 12 months of placements.</p>
+                <div class="slider-nav" id="destinations-nav"></div>
+            </div>
+        </div>
+        <div class="slider reveal" id="destinations-slider" data-slider data-slider-autoplay="5200" data-slider-nav="#destinations-nav">
+            <div class="slider-track" data-slider-track role="region" aria-label="Study destinations carousel">
+                <article class="slider-slide hx-dest">
+                    <div class="hx-dest-photo media media--zoom" data-media-label="United Kingdom">
+                        <img src="https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?auto=format&amp;fit=crop&amp;w=700&amp;q=70" alt="London skyline in the United Kingdom" loading="lazy" decoding="async" data-media-fallback>
+                    </div>
+                    <div class="hx-dest-body">
+                        <div class="hx-dest-top"><h3>United Kingdom</h3><span class="hx-flag" aria-hidden="true">&#127468;&#127463;</span></div>
+                        <p>World-ranked universities with a two-year post-study work visa.</p>
+                        <div class="hx-chips"><span class="hx-chip">Sept &amp; Jan intake</span><span class="hx-chip">IELTS 6.0+</span></div>
+                        <div class="hx-dest-foot"><span class="hx-dest-price">&pound;12k&ndash;22k<small>tuition / year</small></span><a class="hx-link" href="{% url 'register' %}">Apply <span aria-hidden="true">&#8594;</span></a></div>
+                    </div>
+                </article>
+                <article class="slider-slide hx-dest">
+                    <div class="hx-dest-photo media media--zoom" data-media-label="United States">
+                        <img src="https://images.unsplash.com/photo-1485738422979-f5c462d49f74?auto=format&amp;fit=crop&amp;w=700&amp;q=70" alt="City skyline in the United States" loading="lazy" decoding="async" data-media-fallback>
+                    </div>
+                    <div class="hx-dest-body">
+                        <div class="hx-dest-top"><h3>United States</h3><span class="hx-flag" aria-hidden="true">&#127482;&#127480;</span></div>
+                        <p>Flexible majors, research funding and strong graduate pathways.</p>
+                        <div class="hx-chips"><span class="hx-chip">Fall &amp; Spring</span><span class="hx-chip">TOEFL / IELTS</span></div>
+                        <div class="hx-dest-foot"><span class="hx-dest-price">$18k&ndash;34k<small>tuition / year</small></span><a class="hx-link" href="{% url 'register' %}">Apply <span aria-hidden="true">&#8594;</span></a></div>
+                    </div>
+                </article>
+                <article class="slider-slide hx-dest">
+                    <div class="hx-dest-photo media media--zoom" data-media-label="Canada">
+                        <img src="https://images.unsplash.com/photo-1517935706615-2717063c2225?auto=format&amp;fit=crop&amp;w=700&amp;q=70" alt="Canadian city skyline" loading="lazy" decoding="async" data-media-fallback>
+                    </div>
+                    <div class="hx-dest-body">
+                        <div class="hx-dest-top"><h3>Canada</h3><span class="hx-flag" aria-hidden="true">&#127464;&#127462;</span></div>
+                        <p>Affordable tuition and a three-year post-graduation work permit.</p>
+                        <div class="hx-chips"><span class="hx-chip">Sept &amp; Jan</span><span class="hx-chip">SDS friendly</span></div>
+                        <div class="hx-dest-foot"><span class="hx-dest-price">CAD 16k&ndash;28k<small>tuition / year</small></span><a class="hx-link" href="{% url 'register' %}">Apply <span aria-hidden="true">&#8594;</span></a></div>
+                    </div>
+                </article>
+
+                <article class="slider-slide hx-dest">
+                    <div class="hx-dest-photo media media--zoom" data-media-label="Australia">
+                        <img src="https://images.unsplash.com/photo-1524293581917-878a6d017c71?auto=format&amp;fit=crop&amp;w=700&amp;q=70" alt="Sydney harbour in Australia" loading="lazy" decoding="async" data-media-fallback>
+                    </div>
+                    <div class="hx-dest-body">
+                        <div class="hx-dest-top"><h3>Australia</h3><span class="hx-flag" aria-hidden="true">&#127462;&#127482;</span></div>
+                        <p>Generous work rights during study plus regional migration points.</p>
+                        <div class="hx-chips"><span class="hx-chip">Feb &amp; July</span><span class="hx-chip">GTE guidance</span></div>
+                        <div class="hx-dest-foot"><span class="hx-dest-price">AUD 22k&ndash;38k<small>tuition / year</small></span><a class="hx-link" href="{% url 'register' %}">Apply <span aria-hidden="true">&#8594;</span></a></div>
+                    </div>
+                </article>
+                <article class="slider-slide hx-dest">
+                    <div class="hx-dest-photo media media--zoom" data-media-label="Germany">
+                        <img src="https://images.unsplash.com/photo-1467269204594-9661b134dd2b?auto=format&amp;fit=crop&amp;w=700&amp;q=70" alt="German university city" loading="lazy" decoding="async" data-media-fallback>
+                    </div>
+                    <div class="hx-dest-body">
+                        <div class="hx-dest-top"><h3>Germany</h3><span class="hx-flag" aria-hidden="true">&#127465;&#127466;</span></div>
+                        <p>Low or zero tuition at public universities with strong engineering.</p>
+                        <div class="hx-chips"><span class="hx-chip">Winter &amp; Summer</span><span class="hx-chip">Blocked account</span></div>
+                        <div class="hx-dest-foot"><span class="hx-dest-price">&euro;0&ndash;8k<small>tuition / year</small></span><a class="hx-link" href="{% url 'register' %}">Apply <span aria-hidden="true">&#8594;</span></a></div>
+                    </div>
+                </article>
+                <article class="slider-slide hx-dest">
+                    <div class="hx-dest-photo media media--zoom" data-media-label="Japan">
+                        <img src="https://images.unsplash.com/photo-1480796927426-f609979314bd?auto=format&amp;fit=crop&amp;w=700&amp;q=70" alt="Street scene in Tokyo, Japan" loading="lazy" decoding="async" data-media-fallback>
+                    </div>
+                    <div class="hx-dest-body">
+                        <div class="hx-dest-top"><h3>Japan</h3><span class="hx-flag" aria-hidden="true">&#127471;&#127477;</span></div>
+                        <p>Scholarship-rich programmes and part-time work up to 28 hours.</p>
+                        <div class="hx-chips"><span class="hx-chip">April &amp; October</span><span class="hx-chip">JLPT helpful</span></div>
+                        <div class="hx-dest-foot"><span class="hx-dest-price">&yen;700k&ndash;1.4m<small>tuition / year</small></span><a class="hx-link" href="{% url 'register' %}">Apply <span aria-hidden="true">&#8594;</span></a></div>
+                    </div>
+                </article>
+
+                <article class="slider-slide hx-dest">
+                    <div class="hx-dest-photo media media--zoom" data-media-label="South Korea">
+                        <img src="https://images.unsplash.com/photo-1538485399081-7191377e8241?auto=format&amp;fit=crop&amp;w=700&amp;q=70" alt="Skyline in South Korea" loading="lazy" decoding="async" data-media-fallback>
+                    </div>
+                    <div class="hx-dest-body">
+                        <div class="hx-dest-top"><h3>South Korea</h3><span class="hx-flag" aria-hidden="true">&#127472;&#127479;</span></div>
+                        <p>Global Korea Scholarships and industry-linked technology degrees.</p>
+                        <div class="hx-chips"><span class="hx-chip">March &amp; September</span><span class="hx-chip">TOPIK levels</span></div>
+                        <div class="hx-dest-foot"><span class="hx-dest-price">&#8361;4m&ndash;9m<small>tuition / year</small></span><a class="hx-link" href="{% url 'register' %}">Apply <span aria-hidden="true">&#8594;</span></a></div>
+                    </div>
+                </article>
+                <article class="slider-slide hx-dest">
+                    <div class="hx-dest-photo media media--zoom" data-media-label="Malaysia">
+                        <img src="https://images.unsplash.com/photo-1596422846543-75c6fc197f07?auto=format&amp;fit=crop&amp;w=700&amp;q=70" alt="Modern skyline in Kuala Lumpur" loading="lazy" decoding="async" data-media-fallback>
+                    </div>
+                    <div class="hx-dest-body">
+                        <div class="hx-dest-top"><h3>Malaysia</h3><span class="hx-flag" aria-hidden="true">&#127474;&#127486;</span></div>
+                        <p>Low living costs with UK and Australian branch campuses nearby.</p>
+                        <div class="hx-chips"><span class="hx-chip">Rolling intake</span><span class="hx-chip">Budget friendly</span></div>
+                        <div class="hx-dest-foot"><span class="hx-dest-price">RM 12k&ndash;24k<small>tuition / year</small></span><a class="hx-link" href="{% url 'register' %}">Apply <span aria-hidden="true">&#8594;</span></a></div>
+                    </div>
+                </article>
+            </div>
+            <div class="slider-dots" data-slider-dots></div>
+        </div>
+    </section>
+
+
+    {# ---------------- Services ---------------- #}
+    <section class="home-wrap home-section" id="services">
+        <div class="hx-head reveal">
+            <div>
+                <p class="section-kicker">Our services</p>
+                <h2>Everything your application needs, in one place.</h2>
+                <p>Four focused services that carry you from the first conversation to your first week on campus.</p>
+            </div>
+            <div class="hx-head-side">
+                <p>Included with every student account.</p>
+                <a class="hx-link" href="{% url 'register' %}">Talk to a counsellor <span aria-hidden="true">&#8594;</span></a>
+            </div>
+        </div>
+        <div class="hx-services reveal">
+            <article class="hx-service">
+                <span class="hx-service-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4 4"/></svg></span>
+                <h3>Find the right fit</h3>
+                <p>We review your academics, budget and career goals, then shortlist universities you can realistically get into and afford.</p>
+                <span class="hx-service-num">01 / PROFILE</span>
+            </article>
+            <article class="hx-service">
+                <span class="hx-service-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5"/><path d="M10 13h5"/><path d="M10 17h5"/></svg></span>
+                <h3>Build a strong file</h3>
+                <p>Statement of purpose, recommendation letters and document checks &mdash; prepared together so nothing gets rejected.</p>
+                <span class="hx-service-num">02 / APPLICATION</span>
+            </article>
+            <article class="hx-service">
+                <span class="hx-service-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v16"/><path d="M8 8h6.5a2.5 2.5 0 0 1 0 5H9a2.5 2.5 0 0 0 0 5h7"/></svg></span>
+                <h3>Fund your studies</h3>
+                <p>Scholarship mapping, tuition planning and financial document guidance for a clean, credible bank statement.</p>
+                <span class="hx-service-num">03 / FUNDING</span>
+            </article>
+            <article class="hx-service">
+                <span class="hx-service-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V7l8-3 8 3v13"/><path d="M9 20v-5h6v5"/><path d="M4 20h16"/></svg></span>
+                <h3>Arrive ready</h3>
+                <p>Visa filing, interview practice, accommodation and pre-departure briefing so you land with a plan.</p>
+                <span class="hx-service-num">04 / VISA &amp; TRAVEL</span>
+            </article>
+        </div>
+    </section>
+
+
+    {# ---------------- Universities slider ---------------- #}
+    <section class="home-wrap home-section" id="universities">
+        <div class="hx-head reveal">
+            <div>
+                <p class="section-kicker">Partner universities</p>
+                <h2>Apply where your profile actually wins.</h2>
+                <p>Direct pathways and conditional offers with more than 320 institutions across 18 countries.</p>
+            </div>
+            <div class="hx-head-side">
+                <p>Swipe to browse our most requested universities.</p>
+                <div class="slider-nav" id="universities-nav"></div>
+            </div>
+        </div>
+        <div class="slider reveal" id="universities-slider" data-slider data-slider-autoplay="4600" data-slider-nav="#universities-nav">
+            <div class="slider-track" data-slider-track role="region" aria-label="Partner universities carousel">
+                <article class="slider-slide hx-uni">
+                    <div class="hx-uni-photo media media--zoom" data-media-label="Campus">
+                        <img src="https://images.unsplash.com/photo-1562774053-701939374585?auto=format&amp;fit=crop&amp;w=700&amp;q=70" alt="University of Toronto campus" loading="lazy" decoding="async" data-media-fallback>
+                    </div>
+                    <div class="hx-uni-body">
+                        <div class="hx-uni-head">
+                            <span class="hx-uni-badge" aria-hidden="true">UofT</span>
+                            <div><h3>University of Toronto</h3><span>Toronto, Canada</span></div>
+                        </div>
+                        <div class="hx-uni-tags"><span class="hx-rank">QS #21</span><span class="hx-chip">Sept &amp; Jan</span></div>
+                        <div class="hx-uni-foot"><span>Computer Science &middot; MBA</span><a class="hx-link" href="{% url 'register' %}">Programs <span aria-hidden="true">&#8594;</span></a></div>
+                    </div>
+                </article>
+                <article class="slider-slide hx-uni">
+                    <div class="hx-uni-photo media media--zoom" data-media-label="Campus">
+                        <img src="https://images.unsplash.com/photo-1541339907198-e08756dedf3f?auto=format&amp;fit=crop&amp;w=700&amp;q=70" alt="Monash University campus" loading="lazy" decoding="async" data-media-fallback>
+                    </div>
+                    <div class="hx-uni-body">
+                        <div class="hx-uni-head">
+                            <span class="hx-uni-badge" aria-hidden="true">MU</span>
+                            <div><h3>Monash University</h3><span>Melbourne, Australia</span></div>
+                        </div>
+                        <div class="hx-uni-tags"><span class="hx-rank">QS #37</span><span class="hx-chip">Feb &amp; July</span></div>
+                        <div class="hx-uni-foot"><span>Business &middot; IT &middot; Nursing</span><a class="hx-link" href="{% url 'register' %}">Programs <span aria-hidden="true">&#8594;</span></a></div>
+                    </div>
+                </article>
+                <article class="slider-slide hx-uni">
+                    <div class="hx-uni-photo media media--zoom" data-media-label="Campus">
+                        <img src="https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&amp;fit=crop&amp;w=700&amp;q=70" alt="University of Manchester campus" loading="lazy" decoding="async" data-media-fallback>
+                    </div>
+                    <div class="hx-uni-body">
+                        <div class="hx-uni-head">
+                            <span class="hx-uni-badge" aria-hidden="true">UoM</span>
+                            <div><h3>University of Manchester</h3><span>Manchester, UK</span></div>
+                        </div>
+                        <div class="hx-uni-tags"><span class="hx-rank">QS #34</span><span class="hx-chip">Sept intake</span></div>
+                        <div class="hx-uni-foot"><span>Engineering &middot; Data Science</span><a class="hx-link" href="{% url 'register' %}">Programs <span aria-hidden="true">&#8594;</span></a></div>
+                    </div>
+                </article>
+
+                <article class="slider-slide hx-uni">
+                    <div class="hx-uni-photo media media--zoom" data-media-label="Campus">
+                        <img src="https://images.unsplash.com/photo-1607237138185-eedd9c632b0b?auto=format&amp;fit=crop&amp;w=700&amp;q=70" alt="Technical University of Munich campus" loading="lazy" decoding="async" data-media-fallback>
+                    </div>
+                    <div class="hx-uni-body">
+                        <div class="hx-uni-head">
+                            <span class="hx-uni-badge" aria-hidden="true">TUM</span>
+                            <div><h3>Technical University of Munich</h3><span>Munich, Germany</span></div>
+                        </div>
+                        <div class="hx-uni-tags"><span class="hx-rank">QS #28</span><span class="hx-chip">Low tuition</span></div>
+                        <div class="hx-uni-foot"><span>Robotics &middot; Mechanical</span><a class="hx-link" href="{% url 'register' %}">Programs <span aria-hidden="true">&#8594;</span></a></div>
+                    </div>
+                </article>
+                <article class="slider-slide hx-uni">
+                    <div class="hx-uni-photo media media--zoom" data-media-label="Campus">
+                        <img src="https://images.unsplash.com/photo-1519452575417-564c1401ecc0?auto=format&amp;fit=crop&amp;w=700&amp;q=70" alt="Arizona State University campus" loading="lazy" decoding="async" data-media-fallback>
+                    </div>
+                    <div class="hx-uni-body">
+                        <div class="hx-uni-head">
+                            <span class="hx-uni-badge" aria-hidden="true">ASU</span>
+                            <div><h3>Arizona State University</h3><span>Tempe, United States</span></div>
+                        </div>
+                        <div class="hx-uni-tags"><span class="hx-rank">QS #179</span><span class="hx-chip">Fall &amp; Spring</span></div>
+                        <div class="hx-uni-foot"><span>Business Analytics &middot; CS</span><a class="hx-link" href="{% url 'register' %}">Programs <span aria-hidden="true">&#8594;</span></a></div>
+                    </div>
+                </article>
+                <article class="slider-slide hx-uni">
+                    <div class="hx-uni-photo media media--zoom" data-media-label="Campus">
+                        <img src="https://images.unsplash.com/photo-1498243691581-b145c3f54a5a?auto=format&amp;fit=crop&amp;w=700&amp;q=70" alt="Seoul National University campus" loading="lazy" decoding="async" data-media-fallback>
+                    </div>
+                    <div class="hx-uni-body">
+                        <div class="hx-uni-head">
+                            <span class="hx-uni-badge" aria-hidden="true">SNU</span>
+                            <div><h3>Seoul National University</h3><span>Seoul, South Korea</span></div>
+                        </div>
+                        <div class="hx-uni-tags"><span class="hx-rank">QS #31</span><span class="hx-chip">Scholarships</span></div>
+                        <div class="hx-uni-foot"><span>Semiconductor &middot; AI</span><a class="hx-link" href="{% url 'register' %}">Programs <span aria-hidden="true">&#8594;</span></a></div>
+                    </div>
+                </article>
+            </div>
+            <div class="slider-dots" data-slider-dots></div>
+        </div>
+    </section>
+
+
+    {# ---------------- Process ---------------- #}
+    <section class="home-wrap home-section" id="process">
+        <div class="hx-head hx-head--center reveal">
+            <div>
+                <p class="section-kicker">How we help</p>
+                <h2>Five clear steps from enquiry to departure.</h2>
+                <p>Every milestone is tracked inside your student account, so you always know what is happening and what comes next.</p>
+            </div>
+        </div>
+        <div class="hx-process reveal">
+            <div class="hx-process-track">
+                <article class="hx-step">
+                    <span class="hx-step-dot">01</span>
+                    <small>Free assessment</small>
+                    <h3>Create your profile</h3>
+                    <p>Tell us your academics, budget and target intake. We review it within one working day.</p>
+                </article>
+                <article class="hx-step">
+                    <span class="hx-step-dot">02</span>
+                    <small>Shortlisting</small>
+                    <h3>Match your universities</h3>
+                    <p>Receive a realistic list with entry requirements, tuition and scholarship options.</p>
+                </article>
+                <article class="hx-step">
+                    <span class="hx-step-dot">03</span>
+                    <small>Documents</small>
+                    <h3>Prepare and apply</h3>
+                    <p>Upload documents, refine your statement of purpose and submit applications together.</p>
+                </article>
+                <article class="hx-step">
+                    <span class="hx-step-dot">04</span>
+                    <small>Offer &amp; finance</small>
+                    <h3>Compare your offers</h3>
+                    <p>Weigh offers side by side and plan tuition payments and funding documents.</p>
+                </article>
+                <article class="hx-step">
+                    <span class="hx-step-dot">05</span>
+                    <small>Visa &amp; travel</small>
+                    <h3>Fly with confidence</h3>
+                    <p>Visa filing, interview coaching, accommodation and a pre-departure briefing.</p>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    {# ---------------- Why us ---------------- #}
+    <section class="home-wrap home-section" id="why-us">
+        <div class="hx-why reveal">
+            <div class="hx-why-panel">
+                <p class="section-kicker">Why Global EduLink</p>
+                <h2>Guidance that feels personal, not complicated.</h2>
+                <p>Good advice should leave you certain about your next move. We pair real human support with a student portal that keeps everything visible.</p>
+                <ul class="hx-why-list">
+                    <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> Student-focused advice built around Bangladeshi applications</li>
+                    <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> Document checklist, timeline and notifications in one dashboard</li>
+                    <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> Direct university contacts instead of third-party guesswork</li>
+                </ul>
+                {% if user.is_authenticated %}
+                    <a class="button" href="{% url 'dashboard' %}">Go to your dashboard</a>
+                {% else %}
+                    <a class="button" href="{% url 'register' %}">Create your free account</a>
+                {% endif %}
+            </div>
+            <div class="hx-why-side">
+                <article class="hx-why-card">
+                    <strong>2,400+ placements</strong>
+                    <p>Students guided through admissions since 2014.</p>
+                </article>
+                <article class="hx-why-card">
+                    <strong>98% visa success</strong>
+                    <p>Files prepared and reviewed before submission.</p>
+                </article>
+                <article class="hx-why-card">
+                    <strong>48-hour replies</strong>
+                    <p>Every question answered by your own counsellor.</p>
+                </article>
+                <article class="hx-why-card">
+                    <strong>No hidden fees</strong>
+                    <p>Service charges agreed and documented upfront.</p>
+                </article>
+                <div class="hx-why-photo media media--zoom" data-media-label="Counselling team">
+                    <img src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&amp;fit=crop&amp;w=900&amp;q=70" alt="Global EduLink counselling team at work" loading="lazy" decoding="async" data-media-fallback>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    {# ---------------- Testimonials slider ---------------- #}
+    <section class="home-wrap home-section" id="testimonials">
+        <div class="hx-head reveal">
+            <div>
+                <p class="section-kicker">Student stories</p>
+                <h2>Journeys that started with one conversation.</h2>
+                <p>Real students from Dhaka, Chattogram and Sylhet now studying across four continents.</p>
+            </div>
+            <div class="hx-head-side">
+                <p>Swipe through recent placements.</p>
+                <div class="slider-nav" id="testimonials-nav"></div>
+            </div>
+        </div>
+        <div class="slider reveal" id="testimonials-slider" data-slider data-slider-autoplay="6200" data-slider-nav="#testimonials-nav">
+            <div class="slider-track" data-slider-track role="region" aria-label="Student testimonials carousel">
+                <article class="slider-slide hx-quote">
+                    <span class="hx-stars" role="img" aria-label="Rated 5 out of 5">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+                    <blockquote>&ldquo;My counsellor mapped out three realistic options and prepared every document with me. I had my offer from Toronto in seven weeks.&rdquo;</blockquote>
+                    <div class="hx-quote-author">
+                        <div class="hx-avatars" aria-hidden="true"><span>AR</span></div>
+                        <div><strong>Arafat Rahman</strong><small>MSc Data Science &middot; University of Toronto</small></div>
+                    </div>
+                </article>
+                <article class="slider-slide hx-quote">
+                    <span class="hx-stars" role="img" aria-label="Rated 5 out of 5">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+                    <blockquote>&ldquo;The dashboard showed exactly what was pending, so nothing was ever a surprise for my parents or for me.&rdquo;</blockquote>
+                    <div class="hx-quote-author">
+                        <div class="hx-avatars" aria-hidden="true"><span>SK</span></div>
+                        <div><strong>Sumaiya Kabir</strong><small>BBA Marketing &middot; Monash University</small></div>
+                    </div>
+                </article>
+                <article class="slider-slide hx-quote">
+                    <span class="hx-stars" role="img" aria-label="Rated 5 out of 5">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+                    <blockquote>&ldquo;They caught two mistakes in my statement of purpose before submission. That detail saved me an entire intake.&rdquo;</blockquote>
+                    <div class="hx-quote-author">
+                        <div class="hx-avatars" aria-hidden="true"><span>MH</span></div>
+                        <div><strong>Mehedi Hasan</strong><small>MSc Mechanical &middot; TU Munich</small></div>
+                    </div>
+                </article>
+                <article class="slider-slide hx-quote">
+                    <span class="hx-stars" role="img" aria-label="Rated 5 out of 5">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+                    <blockquote>&ldquo;Visa interview practice made the difference. I walked in confident and was approved the same week.&rdquo;</blockquote>
+                    <div class="hx-quote-author">
+                        <div class="hx-avatars" aria-hidden="true"><span>NJ</span></div>
+                        <div><strong>Nusrat Jahan</strong><small>MSc Nursing &middot; University of Manchester</small></div>
+                    </div>
+                </article>
+            </div>
+            <div class="slider-dots" data-slider-dots></div>
+        </div>
+    </section>
+
+
+    {# ---------------- FAQ ---------------- #}
+    <section class="home-wrap home-section hx-faq" id="faq">
+        <div class="hx-faq-side reveal">
+            <p class="section-kicker">Helpful answers</p>
+            <h2>Good questions deserve clear answers.</h2>
+            <p>Still unsure about something? Message us and a counsellor will reply within one working day.</p>
+            <a class="hx-link" href="mailto:hello@globaledulink.com">Ask a counsellor <span aria-hidden="true">&#8594;</span></a>
+        </div>
+        <div class="hx-faq-list reveal">
+            <details open>
+                <summary>What can Global EduLink help me with?</summary>
+                <p>Course and university selection, application preparation, document planning, scholarship guidance, offer comparison and visa interview preparation &mdash; all tracked inside your student account.</p>
+            </details>
+            <details>
+                <summary>How much does the service cost?</summary>
+                <p>Your first profile assessment is free. Service charges depend on the destination and number of universities, and they are documented in writing before you commit to anything.</p>
+            </details>
+            <details>
+                <summary>Do I need IELTS before contacting you?</summary>
+                <p>No. Many universities accept a conditional offer while you prepare your English test. We plan the timeline so your test date never delays the application.</p>
+            </details>
+            <details>
+                <summary>Can you help with scholarships?</summary>
+                <p>Yes. We map merit and need-based scholarships you qualify for, prepare the supporting documents and track each deadline for you.</p>
+            </details>
+            <details>
+                <summary>How long does the whole process take?</summary>
+                <p>Most students go from first consultation to visa decision in four to seven months, depending on the intake and how quickly documents are completed.</p>
+            </details>
+            <details>
+                <summary>How do I track my application?</summary>
+                <p>Every registered student gets a dashboard with live status, document checklist, timeline and notifications from the agency team.</p>
+            </details>
+        </div>
+    </section>
+
+    {# ---------------- CTA ---------------- #}
+    <section class="home-wrap home-section" id="contact">
+        <div class="hx-cta reveal">
+            <div class="hx-cta-copy">
+                <p class="section-kicker">Start today</p>
+                <h2>Your next chapter can begin this week.</h2>
+                <p>Book a free 30-minute consultation. We will review your profile, suggest realistic destinations and outline the exact steps to get there.</p>
+                <div class="hx-cta-actions">
+                    {% if user.is_authenticated %}
+                        <a class="button button--mint" href="{% url 'dashboard' %}">Open your dashboard</a>
+                    {% else %}
+                        <a class="button button--mint" href="{% url 'register' %}">Create free account <span aria-hidden="true">&#8594;</span></a>
+                    {% endif %}
+                    <a class="button button--ghost-light" href="mailto:hello@globaledulink.com">Email our team</a>
+                </div>
+            </div>
+            <div class="hx-cta-contact">
+                <a href="tel:+8801700000000">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 4h3l2 5-2.2 1.6a12 12 0 0 0 5.6 5.6L16 14l5 2v3a2 2 0 0 1-2.2 2A16 16 0 0 1 4 6.2 2 2 0 0 1 6 4Z"/></svg>
+                    <span><small>Call us</small>+880 1700 000 000</span>
+                </a>
+                <a href="mailto:hello@globaledulink.com">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M4 8l8 5 8-5"/></svg>
+                    <span><small>Email</small>hello@globaledulink.com</span>
+                </a>
+                <a href="/#faq">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s6-5.2 6-10a6 6 0 1 0-12 0c0 4.8 6 10 6 10Z"/><circle cx="12" cy="11" r="2.4"/></svg>
+                    <span><small>Visit office</small>Banani, Dhaka 1213</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+<!-- GENERATED-BLOCK-END -->
+</main>
 {% endblock %}

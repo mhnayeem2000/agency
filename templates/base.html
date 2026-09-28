@@ -9,8 +9,8 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="manifest" href="{% url 'manifest' %}">
-    <link rel="icon" href="{% static 'pwa/icon.png' %}" type="image/png">
-    <link rel="apple-touch-icon" href="{% static 'pwa/icon.png' %}">
+    <link rel="icon" href="{% static 'pwa/Appicon.png' %}" type="image/png">
+    <link rel="apple-touch-icon" href="{% static 'pwa/Appicon.png' %}">
 
     <title>{% block title %}Student Agency{% endblock %}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -31,6 +31,15 @@
             --red: #c24149;
             --amber: #b7791f;
             --shadow: 0 14px 40px rgba(23, 32, 51, 0.07);
+            /* Layout scale — the whole site is built around a 1380px canvas. */
+            --max-width: 1380px;
+            --max-reading: 1380px;
+            --brand-mint: #7ef0cd;
+            --brand-deep: #0d1734;
+            --radius-card: 18px;
+            --radius-card-lg: 26px;
+            --app-bar-height: 60px;
+            --bottom-nav-height: calc(62px + env(safe-area-inset-bottom, 0px));
         }
 
         * {
@@ -46,15 +55,24 @@
         }
 
         .navbar {
+            background: rgba(255, 255, 255, 0.88);
+            border-bottom: 1px solid rgba(230, 234, 240, 0.82);
+            backdrop-filter: blur(18px);
+            position: sticky;
+            top: 0;
+            z-index: 20;
+        }
+
+        .navbar-inner {
             align-items: center;
-            background: #ffffff;
-            border-bottom: 1px solid var(--line);
             display: flex;
             gap: 18px;
-            min-height: 72px;
-            padding: 14px clamp(18px, 4vw, 52px);
-            position: relative;
-            z-index: 20;
+            margin: 0 auto;
+            max-width: 1280px;
+            min-height: 76px;
+            /* app bar */
+            padding: 14px clamp(20px, 4vw, 36px);
+            width: 100%;
         }
 
         .brand {
@@ -270,8 +288,8 @@
 
         .container {
             margin: 0 auto;
-            max-width: 1240px;
-            padding: clamp(28px, 5vw, 56px) clamp(18px, 4vw, 52px) 72px;
+            max-width: 1280px;
+            padding: clamp(28px, 5vw, 56px) clamp(20px, 4vw, 36px) 88px;
         }
 
         .card {
@@ -1597,164 +1615,61 @@
             text-align: center;
         }
 
-        .hero-panel {
-            background: var(--ink);
-            border-radius: 18px;
-            color: #fff;
-            display: grid;
-            gap: 36px;
-            grid-template-columns: 1.5fr 0.75fr;
-            overflow: hidden;
-            padding: clamp(28px, 6vw, 68px);
-            position: relative;
-        }
-
-        .hero-panel::after {
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            border-radius: 50%;
-            content: "";
-            height: 440px;
-            position: absolute;
-            right: -170px;
-            top: -160px;
-            width: 440px;
-        }
-
-        .hero-copy,
-        .hero-aside {
-            position: relative;
-            z-index: 1;
-        }
-
-        .hero-copy .eyebrow {
-            color: #a8c4ff;
-        }
-
-        .hero-copy h1 {
-            font-size: clamp(38px, 6vw, 72px);
-            margin-bottom: 22px;
-        }
-
-        .hero-copy h1 span {
-            color: #8fb1ff;
-        }
-
-        .hero-lead {
-            color: #c5ccda;
-            font-size: 17px;
-            max-width: 570px;
-        }
-
-        .hero-actions {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
-            margin-top: 28px;
-        }
-
-        .hero-actions .button-secondary {
-            background: rgba(255, 255, 255, 0.12);
-            color: #fff;
-        }
-
-        .hero-aside {
-            align-self: end;
-            background: rgba(255, 255, 255, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            border-radius: 14px;
-            padding: 24px;
-        }
-
-        .hero-orbit {
-            align-items: center;
-            background: #a8c4ff;
-            border-radius: 50%;
-            color: var(--ink);
-            display: flex;
-            font-family: "Space Grotesk", sans-serif;
-            font-size: 20px;
-            font-weight: 700;
-            height: 58px;
-            justify-content: center;
-            margin-bottom: 42px;
-            outline: 1px solid rgba(255, 255, 255, 0.2);
-            outline-offset: 8px;
-            width: 58px;
-        }
-
-        .hero-aside-label,
-        .hero-aside small {
-            color: #aeb8ca;
-            display: block;
-            font-size: 12px;
-        }
-
-        .hero-aside strong {
-            display: block;
-            font-size: 20px;
-            margin: 4px 0 10px;
-        }
-
-        .home-features {
-            margin-top: 24px;
-        }
-
-        .home-feature-card {
-            min-height: 190px;
-        }
-
-        .home-section {
-            border-top: 1px solid var(--line);
-            display: grid;
-            gap: clamp(24px, 7vw, 110px);
-            grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
-            margin-top: clamp(72px, 10vw, 128px);
-            padding-top: 32px;
-        }
-
-        .home-section h2 { margin-bottom: 0; max-width: 560px; }
-        .home-section > p { font-size: 18px; margin: 0; max-width: 590px; }
-
-        .split-section { background: linear-gradient(110deg, #eef4ff, transparent 70%); margin-left: -52px; margin-right: -52px; padding: 42px 52px; }
-        .goal-list { display: grid; gap: 10px; }
-        .goal-list p { border-bottom: 1px solid rgba(37, 99, 235, .16); margin: 0; padding: 0 0 16px; }
-        .goal-list strong { color: var(--ink); }
-
-        .reasons-grid { grid-column: 1 / -1; }
-        .reasons-grid > div { border-left: 3px solid #a8c4ff; padding-left: 18px; }
-        .reasons-grid h3 { margin-bottom: 7px; }
-        .reasons-grid p { margin: 0; }
-
-        .reason-card {
-            background: var(--surface);
-            border: 1px solid var(--line);
-            border-radius: 12px;
-            padding: 22px;
-            transition: border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
-        }
-
-        .reason-card:hover {
-            border-color: #cdd9ef;
-            box-shadow: var(--shadow);
-            transform: translateY(-3px);
-        }
-
-        .faq-section { display: block; }
-        .faq-section h2 { margin-bottom: 26px; }
-        .faq-section details { border-bottom: 1px solid var(--line); padding: 18px 0; }
-        .faq-section summary { color: var(--ink); cursor: pointer; font-family: "Space Grotesk", sans-serif; font-size: 18px; font-weight: 600; }
-        .faq-section details p { margin: 12px 0 0; max-width: 700px; }
-
-        .feature-number {
-            color: var(--blue);
-            font-family: "Space Grotesk", sans-serif;
-            font-size: 13px;
-            font-weight: 700;
-        }
-
-        .feature-number + h3 {
-            margin-bottom: 0;
-        }
+        /* Public home — self-contained, replacing the earlier homepage rules. */
+        .home-page { overflow: hidden; }
+        .container.home-container { max-width: none; padding: clamp(20px, 3vw, 40px) 0 88px; }
+        .home-wrap { margin: 0 auto; max-width: 1280px; padding: 0 clamp(20px, 4vw, 36px); }
+        .hero-panel { background: #101a31; border-radius: 28px; color: #fff; display: grid; gap: clamp(28px, 5vw, 76px); grid-template-columns: minmax(0, 1.14fr) minmax(310px, .86fr); isolation: isolate; overflow: hidden; padding: clamp(32px, 6vw, 82px); position: relative; }
+        .hero-panel::before, .hero-panel::after { border-radius: 999px; content: ""; filter: blur(2px); position: absolute; z-index: -1; }
+        .hero-panel::before { background: #3c68e8; height: 440px; opacity: .54; right: -145px; top: -190px; width: 440px; }
+        .hero-panel::after { background: #19b897; bottom: -250px; height: 370px; left: 20%; opacity: .25; width: 370px; }
+        .hero-copy { align-self: center; }
+        .hero-copy .eyebrow, .section-kicker { color: #77a1ff; font-size: 11px; font-weight: 700; letter-spacing: .14em; margin: 0 0 16px; text-transform: uppercase; }
+        .hero-copy h1 { font-size: clamp(42px, 6vw, 76px); letter-spacing: -.055em; margin: 0; max-width: 720px; }
+        .hero-copy h1 em { color: #92f0d2; font-style: normal; }
+        .hero-lead { color: #c4cedf; font-size: clamp(16px, 1.5vw, 19px); line-height: 1.65; margin: 24px 0 0; max-width: 570px; }
+        .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 32px; }
+        .hero-actions .button { align-items: center; border-radius: 12px; min-height: 50px; padding: 12px 19px; }
+        .hero-actions .button:first-child { background: #92f0d2; color: #10223a; }
+        .hero-actions .button:first-child:hover { background: #b5f7e2; }
+        .hero-actions .button-secondary { background: rgba(255,255,255,.11); color: #fff; }
+        .hero-actions .button-secondary:hover { background: rgba(255,255,255,.19); }
+        .hero-visual { align-items: center; display: flex; justify-content: center; min-height: 390px; position: relative; }
+        .journey-card { backdrop-filter: blur(12px); background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.18); border-radius: 22px; box-shadow: 0 24px 55px rgba(0,0,0,.2); padding: 21px; position: relative; transform: rotate(4deg); width: min(100%, 350px); }
+        .journey-card::before { border: 1px solid rgba(255,255,255,.18); border-radius: 22px; content: ""; inset: -12px; position: absolute; transform: rotate(-7deg); }
+        .journey-card > * { position: relative; }
+        .journey-top { align-items: center; display: flex; justify-content: space-between; }
+        .journey-badge { align-items: center; background: #92f0d2; border-radius: 10px; color: #10223a; display: inline-flex; font-size: 13px; font-weight: 700; height: 39px; justify-content: center; width: 39px; }
+        .journey-card small { color: #bdcbe1; font-size: 12px; }
+        .journey-card h3 { font-size: 26px; margin: 32px 0 5px; }
+        .journey-card p { color: #c7d1e0; font-size: 14px; margin: 0; }
+        .journey-progress { background: rgba(255,255,255,.15); border-radius: 999px; height: 8px; margin: 24px 0 12px; overflow: hidden; }
+        .journey-progress span { background: #92f0d2; border-radius: inherit; display: block; height: 100%; width: 68%; }
+        .journey-steps { display: flex; justify-content: space-between; }
+        .journey-steps span { color: #d8e2f1; font-size: 11px; }
+        .journey-steps span:last-child { color: #92f0d2; }
+        .home-stats { display: grid; gap: 0; grid-template-columns: repeat(3, 1fr); margin: 0 auto; max-width: 1120px; transform: translateY(-1px); }
+        .home-stat { background: #fff; border: 1px solid #e7edf5; padding: 24px 28px; }
+        .home-stat:first-child { border-radius: 0 0 0 18px; } .home-stat:last-child { border-radius: 0 0 18px 0; }
+        .home-stat strong { color: #14203a; display: block; font-family: "Space Grotesk", sans-serif; font-size: 27px; letter-spacing: -.04em; }
+        .home-stat span { color: #667085; font-size: 13px; }
+        .home-section { margin-top: clamp(80px, 12vw, 152px); }
+        .section-heading-home { display: grid; gap: 24px; grid-template-columns: minmax(0, .88fr) minmax(0, 1.12fr); margin-bottom: 36px; }
+        .section-heading-home h2 { font-size: clamp(31px, 4vw, 53px); letter-spacing: -.045em; margin: 0; max-width: 620px; }
+        .section-heading-home p:not(.section-kicker) { font-size: 17px; line-height: 1.7; margin: 0; max-width: 550px; }
+        .service-grid { display: grid; gap: 18px; grid-template-columns: repeat(3, 1fr); }
+        .service-card { background: #f7f9fd; border: 1px solid #e5eaf2; border-radius: 20px; min-height: 250px; padding: 26px; transition: box-shadow .28s ease, transform .28s ease, background .28s ease; }
+        .service-card:hover { background: #fff; box-shadow: 0 18px 42px rgba(34, 57, 93, .12); transform: translateY(-7px); }
+        .service-icon { align-items: center; background: #e5edff; border-radius: 12px; color: #275fdc; display: flex; font-weight: 700; height: 44px; justify-content: center; width: 44px; }
+        .service-card:nth-child(2) .service-icon { background: #dbf8ed; color: #0d8a69; }.service-card:nth-child(3) .service-icon { background: #fff0d5; color: #b66a05; }
+        .service-card h3 { font-size: 21px; margin: 46px 0 8px; }.service-card p { font-size: 14px; margin: 0; }
+        .journey-section { background: #f3f7ff; border-radius: 28px; padding: clamp(28px, 5vw, 68px); }
+        .journey-section .section-heading-home { margin-bottom: 48px; }.journey-section .section-kicker { color: #2563eb; }
+        .roadmap { display: grid; gap: 15px; grid-template-columns: repeat(3, 1fr); }
+        .roadmap-item { background: rgba(255,255,255,.82); border: 1px solid #dfe8f8; border-radius: 16px; padding: 22px; position: relative; }.roadmap-number { color: #2563eb; font-size: 12px; font-weight: 700; }.roadmap-item h3 { font-size: 19px; margin: 28px 0 8px; }.roadmap-item p { font-size: 14px; margin: 0; }
+        .why-grid { display: grid; gap: 18px; grid-template-columns: 1.1fr .9fr; }.why-feature { background: #13213d; border-radius: 24px; color: #fff; padding: clamp(30px, 5vw, 58px); }.why-feature h2 { font-size: clamp(31px, 4vw, 50px); letter-spacing: -.045em; margin: 0; }.why-feature p { color: #bdcbe1; font-size: 16px; max-width: 510px; }.why-feature .button { background: #92f0d2; border-radius: 12px; color: #13213d; margin-top: 8px; }.why-list { display: grid; gap: 12px; }.why-item { border: 1px solid #e4eaf2; border-radius: 18px; padding: 22px; }.why-item strong { color: #172033; display: block; font-family: "Space Grotesk", sans-serif; font-size: 17px; }.why-item p { font-size: 14px; margin: 7px 0 0; }
+        .faq-section { display: grid; gap: 42px; grid-template-columns: minmax(230px, .7fr) minmax(0, 1.3fr); }.faq-section h2 { font-size: clamp(31px, 4vw, 48px); letter-spacing: -.04em; margin: 0; }.faq-list details { border-bottom: 1px solid #e1e7f0; padding: 0 0 18px; }.faq-list details + details { padding-top: 18px; }.faq-list summary { color: #172033; cursor: pointer; font-family: "Space Grotesk", sans-serif; font-size: 18px; font-weight: 600; list-style: none; padding-right: 34px; position: relative; }.faq-list summary::after { color: #2563eb; content: "+"; font-family: "DM Sans", sans-serif; font-size: 26px; font-weight: 400; position: absolute; right: 1px; top: -6px; }.faq-list details[open] summary::after { content: "−"; }.faq-list details p { font-size: 15px; line-height: 1.7; margin: 12px 0 0; }
+        .site-footer { background: #101a31; color: #fff; margin-top: clamp(80px, 12vw, 144px); }.home-container + .site-footer { margin-top: 0; }.footer-inner { display: grid; gap: 36px; grid-template-columns: 1.25fr .75fr .75fr; margin: 0 auto; max-width: 1280px; padding: 58px clamp(20px, 4vw, 36px) 28px; }.footer-brand { color: #fff; display: inline-flex; font-family: "Space Grotesk", sans-serif; font-size: 19px; font-weight: 700; text-decoration: none; }.footer-brand img { filter: brightness(0) invert(1); height: 38px; max-width: 210px; object-fit: contain; object-position: left; }.footer-copy { color: #aebbd0; font-size: 14px; line-height: 1.65; margin: 15px 0 0; max-width: 340px; }.footer-column h3 { color: #8daeff; font-family: "DM Sans", sans-serif; font-size: 11px; letter-spacing: .12em; margin: 4px 0 14px; text-transform: uppercase; }.footer-column a { color: #d7dfed; display: block; font-size: 14px; margin: 10px 0; text-decoration: none; transition: color .18s ease, transform .18s ease; }.footer-column a:hover { color: #92f0d2; transform: translateX(3px); }.footer-bottom { border-top: 1px solid rgba(255,255,255,.11); color: #93a2ba; display: flex; font-size: 12px; justify-content: space-between; margin: 0 auto; max-width: 1280px; padding: 18px clamp(20px, 4vw, 36px) 24px; }
 
         .auth-layout {
             align-items: center;
@@ -2388,7 +2303,50 @@
             }
         }
 
+        /* Home and navigation refinements for compact, app-like screens. */
+        .navbar-inner { position: relative; }
+
+        @media (max-width: 780px) {
+            .navbar-inner { min-height: 68px; }
+            .nav-links { left: 0; right: 0; top: calc(100% + 1px); }
+            .site-footer { margin-top: 76px; }
+            .footer-inner { gap: 28px; grid-template-columns: 1fr 1fr; padding-top: 42px; }
+            .footer-inner > :first-child { grid-column: 1 / -1; }
+            .home-stats { margin-left: 20px; margin-right: 20px; }
+            .hero-visual { min-height: 280px; }
+            .journey-card { transform: rotate(2deg); }
+            .service-grid, .roadmap { grid-template-columns: 1fr; }
+            .service-card { min-height: auto; }.service-card h3 { margin-top: 28px; }
+            .section-heading-home, .why-grid, .faq-section { grid-template-columns: 1fr; }
+            .section-heading-home { gap: 14px; }.section-heading-home p:not(.section-kicker) { font-size: 16px; }
+            .journey-section .section-heading-home { margin-bottom: 28px; }
+        }
+
+        @media (max-width: 640px) {
+            body { background: #fbfcff; }
+            .navbar { background: rgba(255,255,255,.93); }
+            .navbar-inner { min-height: 64px; padding: 10px 18px; }
+            .brand-logo { height: 34px; }
+            .menu-toggle { height: 40px; width: 40px; }
+            .user-chip { font-size: 12px; max-width: 112px; padding: 6px 9px; }
+            .nav-links { border-radius: 0 0 18px 18px; box-shadow: 0 18px 32px rgba(23,32,51,.14); padding-left: 18px; padding-right: 18px; }
+            .container.home-container { padding-top: 16px; }
+            .home-wrap { padding-left: 16px; padding-right: 16px; }
+            .hero-panel { border-radius: 22px; gap: 22px; padding: 32px 22px 22px; }
+            .hero-copy h1 { font-size: clamp(38px, 11vw, 53px); }
+            .hero-lead { font-size: 15px; margin-top: 18px; }
+            .hero-actions { display: grid; grid-template-columns: 1fr; margin-top: 25px; }.hero-actions .button { width: 100%; }
+            .hero-visual { min-height: 225px; }.journey-card { padding: 18px; width: 285px; }.journey-card h3 { font-size: 23px; margin-top: 24px; }
+            .home-stats { border-radius: 0 0 16px 16px; display: block; margin-left: 16px; margin-right: 16px; }.home-stat { padding: 16px 19px; }.home-stat:first-child, .home-stat:last-child { border-radius: 0; }.home-stat strong { font-size: 21px; }
+            .home-section { margin-top: 76px; }.section-heading-home h2, .faq-section h2 { font-size: 31px; }.service-grid { gap: 12px; }.service-card, .why-item { border-radius: 16px; padding: 21px; }.journey-section { border-radius: 22px; padding: 25px 20px; }.roadmap-item { padding: 19px; }.why-feature { border-radius: 22px; padding: 29px 23px; }.why-feature h2 { font-size: 32px; }.faq-section { gap: 25px; }.faq-list summary { font-size: 16px; }
+            .footer-inner { display: block; padding: 38px 20px 18px; }.footer-column { margin-top: 30px; }.footer-bottom { align-items: flex-start; flex-direction: column; gap: 6px; padding: 16px 20px 24px; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after { animation-duration: .01ms !important; scroll-behavior: auto !important; transition-duration: .01ms !important; }
+        }
     </style>
+    <link rel="stylesheet" href="{% static 'css/agency.css' %}">
 </head>
 
 <body>
@@ -2396,18 +2354,50 @@
 <div class="page-loader" aria-hidden="true"></div>
 
 <nav class="navbar">
+    <div class="navbar-inner">
     <a class="brand" href="/">
-        <img class="brand-logo" src="{% static 'images/globalHlogo.png' %}" alt="Global EduLink">
+        <img class="brand-logo" src="{% static 'images/RLogoH.png' %}" alt="Bright Abroad China">
     </a>
 
-    <button class="menu-toggle" type="button" aria-label="Open navigation menu" aria-expanded="false" aria-controls="primary-navigation">
+    <div class="topbar-actions">
+        {% if user.is_authenticated %}{% if user.is_superuser or user.role == "staff" %}
+        <a class="app-action" href="{% url 'agency_dashboard' %}" aria-label="Agency workspace" title="Agency workspace">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V6.5L12 3l8 3.5V20"/><path d="M9 20v-5h6v5"/><path d="M4 20h16"/></svg>
+        </a>
+        {% else %}
+        <button class="app-action bell-action" type="button" id="bell-toggle" aria-label="Show your notifications" aria-expanded="false" aria-controls="notify-sheet">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8.5a6 6 0 1 0-12 0c0 4.1-1.6 5.6-1.6 5.6h15.2S18 12.6 18 8.5Z"/><path d="M13.7 18a2 2 0 0 1-3.4 0"/></svg>
+            {% if unread_notification_count %}<span class="notification-badge">{% if unread_notification_count > 9 %}9+{% else %}{{ unread_notification_count }}{% endif %}</span>{% endif %}
+        </button>
+        {% endif %}{% else %}
+        <a class="app-action" href="{% url 'login' %}" aria-label="Log in" title="Log in">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z"/><path d="M4.5 20a7.5 7.5 0 0 1 15 0"/></svg>
+        </a>
+        {% endif %}
+        <button class="menu-toggle" type="button" aria-label="Open navigation menu" aria-expanded="false" aria-controls="primary-navigation">
         <span></span><span></span><span></span>
-    </button>
+        </button>
+        </div>
 
     {% if user.is_authenticated %}
-        <span class="user-chip">Hi, {{ user.first_name|default:user.username }}</span>
-
         <div class="nav-links" id="primary-navigation">
+            <div class="drawer-head">
+                <a class="brand" href="/">
+                    <img class="brand-logo" src="{% static 'images/Logo.png' %}" alt="Bright Abroad China">
+                </a>
+                <button class="drawer-close" type="button" data-drawer-close aria-label="Close menu">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12"/><path d="M18 6 6 18"/></svg>
+                </button>
+            </div>
+            <div class="drawer-user">
+                <span class="drawer-user-avatar" aria-hidden="true">{{ user.first_name|default:user.username|slice:":1"|upper }}</span>
+                <div>
+                    <strong>{{ user.first_name|default:user.username }}</strong>
+                    <small>{% if user.is_superuser or user.role == "staff" %}Agency workspace{% else %}Student account{% endif %}</small>
+                    {% if not user.is_superuser and user.role != "staff" %}<a href="{% url 'progress' %}">Track your progress &#8594;</a>{% endif %}
+                </div>
+            </div>
+            <span class="drawer-section-title">Workspace</span>
             {% if user.is_superuser or user.role == "staff" %}
                 <a class="nav-cta {% if request.resolver_match.url_name == 'agency_dashboard' or request.resolver_match.url_name == 'agency_student_detail' or request.resolver_match.url_name == 'agency_application_detail' %}nav-active{% endif %}" href="{% url 'agency_dashboard' %}">Agency workspace</a>
             {% else %}
@@ -2417,14 +2407,153 @@
                 <a class="{% if request.resolver_match.url_name == 'progress' %}nav-active{% endif %}" href="{% url 'progress' %}">Progress</a>
                 <a class="notification-link {% if request.resolver_match.url_name == 'notifications' or request.resolver_match.url_name == 'notification_read' %}nav-active{% endif %}" href="{% url 'notifications' %}" aria-label="Notifications"><span class="notification-icon" aria-hidden="true">&#128276;</span>{% if unread_notification_count %}<span class="notification-badge">{% if unread_notification_count > 9 %}9+{% else %}{{ unread_notification_count }}{% endif %}</span>{% endif %}</a>
             {% endif %}
-            <a href="{% url 'logout' %}">Log out</a>
+                        <a class="nav-logout" href="{% url 'logout' %}">Log out</a>
         </div>
     {% else %}
         <div class="nav-links" id="primary-navigation">
+            <div class="drawer-head">
+                <a class="brand" href="/">
+                    <img class="brand-logo" src="{% static 'images/Logo.png' %}" alt="Bright Abroad China">
+                </a>
+                <button class="drawer-close" type="button" data-drawer-close aria-label="Close menu">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12"/><path d="M18 6 6 18"/></svg>
+                </button>
+            </div>
+            <div class="drawer-user">
+                <span class="drawer-user-avatar" aria-hidden="true">GE</span>
+                <div>
+                    <strong>Start your journey</strong>
+                    <small>Free student account</small>
+                    <a href="{% url 'register' %}">Create account &#8594;</a>
+                </div>
+            </div>
+            <span class="drawer-section-title">Explore</span>
+            <a href="/#destinations">Study destinations</a>
+            <a href="/#services">Our services</a>
+            <a href="/#process">How it works</a>
+            <a href="/#faq">Questions &amp; answers</a>
             <a href="{% url 'login' %}">Log in</a>
             <a class="nav-cta" href="{% url 'register' %}">Create account</a>
         </div>
     {% endif %}
+    </div>
+</nav>
+
+<div class="scroll-progress" id="scroll-progress" aria-hidden="true"><span></span></div>
+
+<div class="nav-scrim" id="nav-scrim"></div>
+
+{% if user.is_authenticated and not user.is_superuser and user.role != "staff" %}
+<div class="sheet-scrim" id="sheet-scrim"></div>
+<aside class="notify-sheet" id="notify-sheet" role="dialog" aria-modal="true" aria-labelledby="notify-sheet-title" aria-hidden="true">
+    <span class="sheet-grabber" aria-hidden="true"></span>
+    <div class="sheet-head">
+        <div>
+            <p class="eyebrow">Your inbox</p>
+            <h2 id="notify-sheet-title">Notifications</h2>
+        </div>
+        <button class="drawer-close" type="button" data-sheet-close aria-label="Close notifications">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12"/><path d="M18 6 6 18"/></svg>
+        </button>
+    </div>
+    <div class="sheet-tools">
+        <span>{% if unread_notification_count %}{{ unread_notification_count }} unread update{{ unread_notification_count|pluralize }}{% else %}You are all caught up{% endif %}</span>
+        <a href="{% url 'notifications' %}">View all &#8594;</a>
+    </div>
+    <div class="sheet-body">
+        {% if recent_notifications %}
+            {% for notification in recent_notifications %}
+                <a class="sheet-item {% if not notification.is_read %}is-unread{% endif %}" href="{% url 'notification_read' notification.id %}">
+                    <span class="sheet-item-ico" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8.5a6 6 0 1 0-12 0c0 4.1-1.6 5.6-1.6 5.6h15.2S18 12.6 18 8.5Z"/><path d="M13.7 18a2 2 0 0 1-3.4 0"/></svg>
+                    </span>
+                    <span>
+                        <strong>{{ notification.title }}</strong>
+                        <p>{{ notification.message|truncatechars:96 }}</p>
+                        <time datetime="{{ notification.created_at|date:'c' }}">{{ notification.created_at|date:"d M Y, h:i A" }}</time>
+                    </span>
+                </a>
+            {% endfor %}
+        {% else %}
+            <div class="sheet-empty">
+                <strong>No notifications yet</strong>
+                <p>Your agency updates will show up here the moment they are posted.</p>
+            </div>
+        {% endif %}
+    </div>
+    <div class="sheet-foot">
+        <a class="button" href="{% url 'notifications' %}">Open notification center</a>
+        <button class="button-ghost" type="button" data-sheet-close>Close</button>
+    </div>
+</aside>
+{% endif %}
+
+<nav class="bottom-nav" id="bottom-nav" aria-label="Quick navigation">
+    <div class="bottom-nav-inner">
+        {% if user.is_authenticated %}{% if user.is_superuser or user.role == "staff" %}
+            <a class="bn-item{% if request.resolver_match.url_name == 'agency_dashboard' or request.resolver_match.url_name == 'agency_student_detail' %} is-active{% endif %}" href="{% url 'agency_dashboard' %}">
+                <span class="bn-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V6.5L12 3l8 3.5V20"/><path d="M9 20v-5h6v5"/><path d="M4 20h16"/></svg></span>
+                <span class="bn-label">Agency</span>
+            </a>
+            <a class="bn-item{% if request.resolver_match.url_name == 'agency_student_create' %} is-active{% endif %}" href="{% url 'agency_student_create' %}">
+                <span class="bn-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14"/><path d="M5 12h14"/></svg></span>
+                <span class="bn-label">Add student</span>
+            </a>
+            <a class="bn-item" href="/">
+                <span class="bn-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"/><path d="M4 12h16"/><path d="M12 4c2.6 2.6 2.6 13.4 0 16"/></svg></span>
+                <span class="bn-label">Website</span>
+            </a>
+            <a class="bn-item" href="{% url 'logout' %}">
+                <span class="bn-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M10 6H6v12h4"/><path d="M15 12H9"/><path d="M18 9l3 3-3 3"/></svg></span>
+                <span class="bn-label">Log out</span>
+            </a>
+        {% else %}
+            <a class="bn-item{% if request.resolver_match.url_name == 'dashboard' %} is-active{% endif %}" href="{% url 'dashboard' %}">
+                <span class="bn-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10.5 12 4l8 6.5V20H4z"/><path d="M10 20v-5h4v5"/></svg></span>
+                <span class="bn-label">Home</span>
+            </a>
+            <a class="bn-item{% if request.resolver_match.url_name == 'documents' %} is-active{% endif %}" href="{% url 'documents' %}">
+                <span class="bn-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5"/><path d="M10 13h5"/><path d="M10 17h5"/></svg></span>
+                <span class="bn-label">Documents</span>
+            </a>
+            <a class="bn-item{% if request.resolver_match.url_name == 'progress' %} is-active{% endif %}" href="{% url 'progress' %}">
+                <span class="bn-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19h16"/><path d="M7 16v-6"/><path d="M12 16V7"/><path d="M17 16v-3"/></svg></span>
+                <span class="bn-label">Progress</span>
+            </a>
+            <a class="bn-item{% if request.resolver_match.url_name == 'notifications' or request.resolver_match.url_name == 'notification_read' %} is-active{% endif %}" href="{% url 'notifications' %}" data-sheet-open>
+                <span class="bn-ico" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8.5a6 6 0 1 0-12 0c0 4.1-1.6 5.6-1.6 5.6h15.2S18 12.6 18 8.5Z"/><path d="M13.7 18a2 2 0 0 1-3.4 0"/></svg>
+                    {% if unread_notification_count %}<span class="bn-badge">{% if unread_notification_count > 9 %}9+{% else %}{{ unread_notification_count }}{% endif %}</span>{% endif %}
+                </span>
+                <span class="bn-label">Alerts</span>
+            </a>
+            <a class="bn-item{% if request.resolver_match.url_name == 'profile' or request.resolver_match.url_name == 'academic_add' %} is-active{% endif %}" href="{% url 'profile' %}">
+                <span class="bn-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z"/><path d="M4.5 20a7.5 7.5 0 0 1 15 0"/></svg></span>
+                <span class="bn-label">Profile</span>
+            </a>
+        {% endif %}{% else %}
+            <a class="bn-item{% if request.resolver_match.url_name == 'home' %} is-active{% endif %}" href="/">
+                <span class="bn-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10.5 12 4l8 6.5V20H4z"/><path d="M10 20v-5h4v5"/></svg></span>
+                <span class="bn-label">Home</span>
+            </a>
+            <a class="bn-item" href="/#destinations">
+                <span class="bn-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"/><path d="M4 12h16"/><path d="M12 4c2.6 2.6 2.6 13.4 0 16"/></svg></span>
+                <span class="bn-label">Countries</span>
+            </a>
+            <a class="bn-item" href="/#process">
+                <span class="bn-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4v8a4 4 0 0 0 4 4h7"/><circle cx="6" cy="6" r="2"/><path d="M15 13l3 3-3 3"/></svg></span>
+                <span class="bn-label">Process</span>
+            </a>
+            <a class="bn-item" href="/#faq">
+                <span class="bn-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"/><path d="M9.6 9.4a2.5 2.5 0 1 1 3.4 2.2c-.7.4-1 1-1 1.7"/><path d="M12 17h.01"/></svg></span>
+                <span class="bn-label">FAQ</span>
+            </a>
+            <a class="bn-item bn-item--cta" href="{% url 'register' %}">
+                <span class="bn-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13"/><path d="M13 6l6 6-6 6"/></svg></span>
+                <span class="bn-label">Start now</span>
+            </a>
+        {% endif %}
+    </div>
 </nav>
 
 {% if messages %}
@@ -2447,12 +2576,75 @@
 
 {% endif %}
 
-<div class="container">
+<div class="container {% if request.resolver_match.url_name == 'home' %}home-container{% endif %}">
 
     {% block content %}
     {% endblock %}
 
 </div>
+
+<footer class="site-footer">
+    <div class="footer-inner">
+        <div>
+            <a class="footer-brand" href="/">
+                <img src="{% static 'images/RLogo.png' %}" alt="Bright Abroad China">
+            </a>
+            <p class="footer-copy">Clear, thoughtful guidance for every step of your international study journey &mdash; from the first shortlist to visa readiness.</p>
+            <ul class="footer-contact">
+                <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s6-5.2 6-10a6 6 0 1 0-12 0c0 4.8 6 10 6 10Z"/><circle cx="12" cy="11" r="2.4"/></svg><span>Level 6, House 42, Road 11, Banani, Dhaka 1213</span></li>
+                <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 4h3l2 5-2.2 1.6a12 12 0 0 0 5.6 5.6L16 14l5 2v3a2 2 0 0 1-2.2 2A16 16 0 0 1 4 6.2 2 2 0 0 1 6 4Z"/></svg><a href="tel:+8801700000000">+880 1700 000 000</a></li>
+                <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M4 8l8 5 8-5"/></svg><a href="mailto:hello@globaledulink.com">hello@globaledulink.com</a></li>
+            </ul>
+            <div class="footer-socials">
+                <a href="#" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 8h2.5V5H14a4 4 0 0 0-4 4v2H8v3h2v6h3v-6h2.5l.5-3H13v-1.4A1.6 1.6 0 0 1 14 8Z"/></svg></a>
+                <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="5"/><circle cx="12" cy="12" r="3.5"/><path d="M16.7 7.3h.01"/></svg></a>
+                <a href="#" aria-label="LinkedIn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8 10.5V16"/><path d="M8 7.6h.01"/><path d="M12 16v-3.1a1.8 1.8 0 0 1 3.6 0V16"/></svg></a>
+                <a href="#" aria-label="YouTube"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="18" height="12" rx="4"/><path d="M11 9.6l3.6 2.4L11 14.4z"/></svg></a>
+            </div>
+        </div>
+        <div class="footer-column">
+            <h3>Explore</h3>
+            <a href="/#about-us">About us</a>
+            <a href="/#destinations">Study destinations</a>
+            <a href="/#services">Our services</a>
+            <a href="/#process">How it works</a>
+            <a href="/#testimonials">Student stories</a>
+        </div>
+        <div class="footer-column">
+            <h3>Get started</h3>
+            {% if user.is_authenticated %}
+                {% if user.is_superuser or user.role == "staff" %}
+                    <a href="{% url 'agency_dashboard' %}">Agency workspace</a>
+                {% else %}
+                    <a href="{% url 'profile' %}">Your profile</a>
+                    <a href="{% url 'documents' %}">Documents</a>
+                    <a href="{% url 'dashboard' %}">Dashboard</a>
+                {% endif %}
+            {% else %}
+                <a href="{% url 'register' %}">Create an account</a>
+                <a href="{% url 'login' %}">Log in</a>
+                <a href="/#faq">Questions &amp; answers</a>
+            {% endif %}
+        </div>
+        <div class="footer-column footer-column--contact">
+            <h3>Visit us</h3>
+            <a href="mailto:hello@globaledulink.com">hello@globaledulink.com</a>
+            <a href="tel:+8801700000000">+880 1700 000 000</a>
+            <a href="/#faq">Book a free consultation</a>
+            <p class="footer-note">Open Sunday &ndash; Thursday, 10:00 AM &ndash; 6:00 PM (BST)</p>
+        </div>
+
+    </div>
+    <div class="footer-bottom">
+        <span>&copy; {% now "Y" %} Global EduLink. All rights reserved.</span>
+        <div class="footer-bottom-links">
+            <a href="/#about-us">About</a>
+            <a href="/#faq">FAQs</a>
+            <a href="{% url 'login' %}">Student login</a>
+            <a href="{% url 'register' %}">Get started</a>
+        </div>
+    </div>
+</footer>
 
 <script>
     var menuToggle = document.querySelector(".menu-toggle");
@@ -2496,6 +2688,11 @@
         });
     }
 </script>
+
+<script>
+    window.AGENCY_MEDIA_FALLBACK = "{% static 'images/photo-placeholder.svg' %}";
+</script>
+<script src="{% static 'js/agency.js' %}" defer></script>
 
 </body>
 </html>

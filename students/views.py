@@ -1,7 +1,19 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core.paginator import Paginator
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, render, redirect
+from django.utils import timezone
+from django.utils.text import slugify
+from io import BytesIO
+from pathlib import Path
+from xml.sax.saxutils import escape
+from reportlab.lib import colors
+from reportlab.lib.enums import TA_LEFT
+from reportlab.lib.pagesizes import A4
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib.units import mm
+from reportlab.platypus import Paragraph, SimpleDocTemplate, Spacer, Table, TableStyle
 from .forms import (
     AcademicRecordForm,
     AgencyStudentCreateForm,
@@ -18,7 +30,207 @@ from .models import (
     StudentProfile,
     AcademicRecord,
     TimelineEvent,
+    StudentAgreement,
 )
+
+
+AGREEMENT_REQUIRED_FIELDS = (
+    "full_name",
+    "date_of_birth",
+    "gender",
+    "passport_number",
+    "passport_expiry",
+    "address",
+    "city",
+    "country",
+    "emergency_contact_name",
+    "emergency_contact_phone",
+)
+
+
+def _agreement_profile_complete(profile):
+    return all(getattr(profile, field) for field in AGREEMENT_REQUIRED_FIELDS)
+
+
+def _agreement_value(value):
+    if value in (None, ""):
+        return "Not provided"
+    if hasattr(value, "strftime"):
+        return value.strftime("%d %B %Y")
+    return str(value)
+
+
+def _build_agreement_pdf(profile):
+    root = Path(__file__).resolve().parent.parent
+    logo_path = root / "static" / "images" / "LogoH.png"
+    watermark_path = root / "static" / "images" / "Logo.png"
+    buffer = BytesIO()
+    doc = SimpleDocTemplate(
+        buffer,
+        pagesize=A4,
+        rightMargin=14 * mm,
+        leftMargin=14 * mm,
+        topMargin=32 * mm,
+        bottomMargin=47 * mm,
+        title="Student Service Agreement",
+        author="Global H",
+    )
+
+    navy = colors.HexColor("#12304A")
+    teal = colors.HexColor("#168C82")
+    muted = colors.HexColor("#526575")
+    rule = colors.HexColor("#D9E2E8")
+    styles = getSampleStyleSheet()
+    styles.add(ParagraphStyle(
+        name="AgreementTitle", parent=styles["Title"], fontName="Helvetica-Bold",
+        fontSize=17, leading=20, textColor=navy, alignment=TA_LEFT, spaceAfter=1.5 * mm,
+    ))
+    styles.add(ParagraphStyle(
+        name="AgreementMeta", parent=styles["Normal"], fontSize=7.5, leading=9,
+        textColor=muted, spaceAfter=3 * mm,
+    ))
+    styles.add(ParagraphStyle(
+        name="AgreementSection", parent=styles["Heading2"], fontName="Helvetica-Bold",
+        fontSize=9, leading=11, textColor=navy, spaceBefore=1.5 * mm, spaceAfter=1.5 * mm,
+    ))
+    styles.add(ParagraphStyle(
+        name="AgreementBody", parent=styles["BodyText"], fontSize=8, leading=11,
+        textColor=colors.HexColor("#283746"), alignment=TA_LEFT,
+    ))
+    styles.add(ParagraphStyle(
+        name="AgreementLabel", parent=styles["Normal"], fontSize=6.4, leading=7.5,
+        textColor=muted, spaceAfter=.5,
+    ))
+    styles.add(ParagraphStyle(
+        name="AgreementValue", parent=styles["Normal"], fontName="Helvetica-Bold",
+        fontSize=7.8, leading=9.3, textColor=navy,
+    ))
+
+    def header_footer(canvas, document):
+        canvas.saveState()
+        # Main brand logo in the header, separate from the pale page watermark.
+        canvas.drawImage(
+            logo_path,
+            17 * mm,
+            A4[1] - 27 * mm,
+            width=47 * mm,
+            height=18 * mm,
+            preserveAspectRatio=True,
+            anchor="sw",
+            mask="auto",
+        )
+
+        # Restore the simple yellow page frame.
+        canvas.setStrokeColor(colors.HexColor("#D7A92B"))
+        canvas.setLineWidth(.55)
+        canvas.rect(8 * mm, 8 * mm, A4[0] - 16 * mm, A4[1] - 16 * mm,
+                    stroke=1, fill=0)
+
+        # Large pale watermark behind all document content.
+        canvas.saveState()
+        canvas.translate(A4[0] / 2, A4[1] / 2)
+        canvas.rotate(28)
+        canvas.setFillAlpha(.09)
+        canvas.drawImage(watermark_path, -55 * mm, -55 * mm, width=110 * mm, height=110 * mm,
+                         preserveAspectRatio=True, anchor="c", mask="auto")
+        canvas.restoreState()
+
+        canvas.setFillColor(navy)
+        canvas.setFont("Helvetica-Bold", 8)
+        canvas.drawString(18 * mm, 42 * mm, "ACKNOWLEDGEMENT AND SIGNATURES")
+        canvas.setFillColor(muted)
+        canvas.setFont("Helvetica", 7)
+        canvas.drawString(18 * mm, 37 * mm,
+                         "Both parties accept the information and terms stated in this agreement.")
+        left_x, right_x = 18 * mm, A4[0] / 2 + 4 * mm
+        line_width = A4[0] / 2 - 24 * mm
+        canvas.setStrokeColor(navy)
+        canvas.setLineWidth(.65)
+        canvas.line(left_x, 28 * mm, left_x + line_width, 28 * mm)
+        canvas.line(right_x, 28 * mm, right_x + line_width, 28 * mm)
+        canvas.setFillColor(muted)
+        canvas.setFont("Helvetica-Bold", 6.8)
+        canvas.drawString(left_x, 23 * mm, "STUDENT SIGNATURE")
+        canvas.drawString(right_x, 23 * mm, "AUTHORIZED REPRESENTATIVE")
+        canvas.setFont("Helvetica", 6.5)
+        canvas.drawString(left_x, 18 * mm, f"Name: {profile.full_name[:32]}")
+        canvas.drawString(left_x, 14 * mm, f"Date: {timezone.localdate():%d %B %Y}")
+        canvas.drawString(right_x, 18 * mm, "Name: ______________________________")
+        canvas.drawString(right_x, 14 * mm, "Date: ______________________________")
+        canvas.restoreState()
+
+    story = [
+        Paragraph("Student Service Agreement", styles["AgreementTitle"]),
+        Paragraph(
+            f"AGREEMENT REF. STU-{(profile.pk or 0):05d} &nbsp;&nbsp; | &nbsp;&nbsp; "
+            f"ISSUED {timezone.localdate():%d %B %Y} &nbsp;&nbsp; | &nbsp;&nbsp; "
+            "Please review all information before signing.", styles["AgreementMeta"]
+        ),
+        Paragraph("STUDENT INFORMATION", styles["AgreementSection"]),
+    ]
+
+    def field(label, value):
+        return [
+            Paragraph(escape(label.upper()), styles["AgreementLabel"]),
+            Paragraph(escape(_agreement_value(value)), styles["AgreementValue"]),
+        ]
+
+    identity = [
+        ("Full name", profile.full_name),
+        ("Date of birth", profile.date_of_birth),
+        ("Gender", profile.get_gender_display() if profile.gender else ""),
+        ("Email", profile.user.email),
+        ("Phone", profile.user.phone),
+        ("Passport number", profile.passport_number),
+        ("Passport expiry", profile.passport_expiry),
+        ("Address", profile.address),
+        ("City", profile.city),
+        ("Country", profile.country),
+        ("Emergency contact", profile.emergency_contact_name),
+        ("Emergency phone", profile.emergency_contact_phone),
+        ("Relationship", profile.emergency_contact_relation),
+        ("Destination country", profile.destination_country),
+        ("University", profile.university),
+        ("Course / program", profile.course),
+        ("Intake", profile.intake),
+    ]
+    table_rows = []
+    for offset in range(0, len(identity), 2):
+        first = identity[offset]
+        second = identity[offset + 1] if offset + 1 < len(identity) else ("", "")
+        table_rows.append([field(*first), field(*second)])
+    identity_table = Table(
+        table_rows,
+        colWidths=[(A4[0] - 28 * mm) / 2] * 2,
+        hAlign="LEFT",
+    )
+    identity_table.setStyle(TableStyle([
+        # Cells remain unfilled so the pale watermark is visible underneath.
+        ("BOX", (0, 0), (-1, -1), .45, rule),
+        ("INNERGRID", (0, 0), (-1, -1), .35, rule),
+        ("VALIGN", (0, 0), (-1, -1), "TOP"),
+        ("LEFTPADDING", (0, 0), (-1, -1), 3.5 * mm),
+        ("RIGHTPADDING", (0, 0), (-1, -1), 3.5 * mm),
+        ("TOPPADDING", (0, 0), (-1, -1), 2.3 * mm),
+        ("BOTTOMPADDING", (0, 0), (-1, -1), 2.3 * mm),
+    ]))
+    story.extend([
+        identity_table,
+        Spacer(1, 2 * mm),
+        Paragraph("TERMS AND CONDITIONS", styles["AgreementSection"]),
+        Paragraph(
+            "The student agrees to pay <b>BDT 10,000 (Ten Thousand Taka)</b> as a file opening fee. "
+            "This fee is <b>non-refundable</b>. After successfully obtaining a visa, the student "
+            "agrees to pay the agency <b>BDT 100,000 (One Lakh Taka)</b>. All university and other "
+            "application fees are the student's responsibility and must be paid by the student; "
+            "the agency does not pay these fees. The student confirms that the information in this "
+            "agreement is accurate to the best of their knowledge and has had the opportunity to "
+            "read and understand these terms.",
+            styles["AgreementBody"],
+        ),
+    ])
+    doc.build(story, onFirstPage=header_footer, onLaterPages=header_footer)
+    return buffer.getvalue()
 
 @login_required
 def profile_view(request):
@@ -59,8 +271,37 @@ def profile_view(request):
         {
             "form": form,
             "profile": profile,
+            "agreement_ready": _agreement_profile_complete(profile),
         }
     )
+
+
+@login_required
+def student_agreement_download_view(request):
+    profile, _ = StudentProfile.objects.get_or_create(user=request.user)
+    if not _agreement_profile_complete(profile):
+        messages.error(
+            request,
+            "Complete and save your name, date of birth, gender, passport details, address, and emergency contact before downloading the agreement.",
+        )
+        return redirect("profile")
+
+    return _create_agreement_download_response(profile)
+
+
+def _create_agreement_download_response(profile):
+    pdf_bytes = _build_agreement_pdf(profile)
+    base_name = slugify(profile.full_name) or "student"
+    file_name = f"student-service-agreement-{base_name}-{timezone.localdate():%Y%m%d}.pdf"
+    agreement = StudentAgreement.objects.create(
+        student=profile,
+        pdf_file=pdf_bytes,
+        file_name=file_name,
+    )
+    response = HttpResponse(bytes(agreement.pdf_file), content_type="application/pdf")
+    response["Content-Disposition"] = f'attachment; filename="{agreement.file_name}"'
+    response["Content-Length"] = len(agreement.pdf_file)
+    return response
 
 
 @login_required
@@ -313,6 +554,13 @@ def is_staff_user(user):
     return user.is_authenticated and (
         user.is_superuser or user.role == "staff"
     )
+
+
+@login_required
+@user_passes_test(is_staff_user)
+def agency_student_agreement_download_view(request, pk):
+    student = get_object_or_404(StudentProfile.objects.select_related("user"), pk=pk)
+    return _create_agreement_download_response(student)
 
 @login_required
 @user_passes_test(is_staff_user)

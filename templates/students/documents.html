@@ -12,6 +12,65 @@ Documents
     <div><p class="eyebrow">Application materials</p><h1>Document checklist</h1><p class="muted">Keep track of everything your agency needs from you.</p></div>
 </div>
 
+<section class="card preparation-checklist" data-prep-checklist data-student-id="{{ request.user.pk }}" aria-labelledby="preparation-checklist-title">
+    <div class="preparation-checklist-heading">
+        <div>
+            <p class="eyebrow">Get ready to apply</p>
+            <h2 id="preparation-checklist-title">Your document readiness checklist</h2>
+            <p>Tick each item when it is ready and has been sent to the agency.</p>
+            <span class="preparation-checklist-note">Your ticks are saved in this browser only. They are not sent to the agency.</span>
+        </div>
+        <div class="preparation-checklist-score" aria-live="polite">
+            <strong data-checklist-count>0</strong><span> / 10 ready</span>
+        </div>
+    </div>
+    <div class="preparation-progress" role="progressbar" aria-label="Document readiness" aria-valuemin="0" aria-valuemax="10" aria-valuenow="0">
+        <span data-checklist-progress></span>
+    </div>
+    <div class="preparation-checklist-items">
+        <label class="preparation-document-item" data-checklist-item data-checklist-key="passport">
+            <span class="preparation-document-copy"><strong>Passport</strong><small>Valid passport and relevant pages</small></span>
+            <span class="preparation-checkbox"><input type="checkbox"><span>Ready / sent</span></span>
+        </label>
+        <label class="preparation-document-item" data-checklist-item data-checklist-key="academic">
+            <span class="preparation-document-copy"><strong>Academic documents</strong><small>SSC, HSC, Diploma, B.Sc. certificates and transcripts</small></span>
+            <span class="preparation-checkbox"><input type="checkbox"><span>Ready / sent</span></span>
+        </label>
+        <label class="preparation-document-item" data-checklist-item data-checklist-key="english">
+            <span class="preparation-document-copy"><strong>English proficiency</strong><small>IELTS, TOEFL, Duolingo or MOI</small></span>
+            <span class="preparation-checkbox"><input type="checkbox"><span>Ready / sent</span></span>
+        </label>
+        <label class="preparation-document-item" data-checklist-item data-checklist-key="cv">
+            <span class="preparation-document-copy"><strong>CV</strong><small>Current academic and work history</small></span>
+            <span class="preparation-checkbox"><input type="checkbox"><span>Ready / sent</span></span>
+        </label>
+        <label class="preparation-document-item" data-checklist-item data-checklist-key="medical">
+            <span class="preparation-document-copy"><strong>Medical reports</strong><small>Medical reports required for your application</small></span>
+            <span class="preparation-checkbox"><input type="checkbox"><span>Ready / sent</span></span>
+        </label>
+        <label class="preparation-document-item" data-checklist-item data-checklist-key="police-clearance">
+            <span class="preparation-document-copy"><strong>Police clearance certificate</strong><small>Current clearance certificate, if required</small></span>
+            <span class="preparation-checkbox"><input type="checkbox"><span>Ready / sent</span></span>
+        </label>
+        <label class="preparation-document-item" data-checklist-item data-checklist-key="publication">
+            <span class="preparation-document-copy"><strong>Paper publication</strong><small>Include if you have a publication</small></span>
+            <span class="preparation-checkbox"><input type="checkbox"><span>Ready / sent</span></span>
+        </label>
+        <label class="preparation-document-item" data-checklist-item data-checklist-key="extracurricular">
+            <span class="preparation-document-copy"><strong>Extra-curricular certificates</strong><small>Include certificates if available</small></span>
+            <span class="preparation-checkbox"><input type="checkbox"><span>Ready / sent</span></span>
+        </label>
+        <label class="preparation-document-item" data-checklist-item data-checklist-key="bank-statements">
+            <span class="preparation-document-copy"><strong>Bank statements</strong><small>Prepare if needed for your application</small></span>
+            <span class="preparation-checkbox"><input type="checkbox"><span>Ready / sent</span></span>
+        </label>
+        <label class="preparation-document-item" data-checklist-item data-checklist-key="parents-nid">
+            <span class="preparation-document-copy"><strong>Parents’ NID</strong><small>Prepare if needed for your application</small></span>
+            <span class="preparation-checkbox"><input type="checkbox"><span>Ready / sent</span></span>
+        </label>
+    </div>
+</section>
+
 <div class="grid-2 documents-layout">
     <section class="card">
         <div class="section-heading"><div><p class="eyebrow">Your checklist</p><h3>Documents</h3></div><span class="status-pill">{{ documents|length }} items</span></div>

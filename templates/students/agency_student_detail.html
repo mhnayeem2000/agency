@@ -8,16 +8,41 @@
 
 {% block content %}
 
+<style>
+    .agency-student-toolbar {
+        display: grid !important;
+        gap: 12px;
+        grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+        margin: 0 0 24px;
+        width: 100%;
+    }
+    .agency-student-toolbar > a {
+        align-items: center;
+        display: flex;
+        justify-content: center;
+        min-height: 48px;
+        text-align: center;
+    }
+    @media (max-width: 780px) {
+        .agency-student-toolbar { grid-template-columns: 1fr !important; }
+    }
+</style>
+
 <div class="agency-detail-page agency-student-page">
 
 <div class="detail-header">
     <div>
         <a class="button-ghost student-back-link" href="{% url 'agency_dashboard' %}">← Back to agency dashboard</a>
-        <div class="student-record-actions"><a class="button button-secondary" href="{% url 'agency_student_edit' student.id %}">Edit student</a><a class="remove-record" href="{% url 'agency_student_delete' student.id %}">Remove student</a></div>
         <p class="eyebrow" style="margin-top: 22px;">Student profile</p>
         <h1>{{ student.full_name|default:student.user.username }}</h1>
     </div>
     <span class="status-pill">{{ student.get_current_status_display }}</span>
+</div>
+
+<div class="agency-student-toolbar">
+    <a class="button" href="{% url 'agency_student_agreement_download' student.id %}">Generate &amp; download agreement</a>
+    <a class="button button-secondary" href="{% url 'agency_student_edit' student.id %}">Edit student</a>
+    <a class="remove-record" href="{% url 'agency_student_delete' student.id %}">Remove student</a>
 </div>
 
 

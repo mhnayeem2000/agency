@@ -61,14 +61,30 @@ class StudentProfile(models.Model):
 
 
     STATUS_CHOICES = (
-        ("registered", "Registered"),
-        ("documents", "Documents Collection"),
-        ("verification", "Documents Verification"),
-        ("application", "University Application"),
-        ("offer", "Offer Letter"),
-        ("visa", "Visa Processing"),
-        ("completed", "Completed"),
+        ("registered", "Profile Registered"),
+        ("verification", "Profile Verification & File Preparation"),
+        ("documents", "Document Collection & Review"),
+        ("professor_outreach", "Professor Outreach & Acceptance Process (For Master's/Research Programs)"),
+        ("application", "University Application In Progress"),
+        ("interview", "Interview Preparation / Interview Scheduled"),
+        ("offer", "Admission Offer & Official Documents Received"),
+        ("visa_processing", "Visa Application Processing"),
+        ("visa_approved", "Visa Approved"),
+        ("pre_departure", "Pre-Departure Preparation & Ready to Fly"),
     )
+
+    STATUS_PROGRESS = {
+        "registered": 5,
+        "verification": 20,
+        "documents": 30,
+        "professor_outreach": 30,
+        "application": 40,
+        "interview": 50,
+        "offer": 90,
+        "visa_processing": 95,
+        "visa_approved": 100,
+        "pre_departure": 100,
+    }
 
     current_status = models.CharField(
         max_length=30,
@@ -84,6 +100,12 @@ class StudentProfile(models.Model):
         max_length=255,
         blank=True
     )
+
+    def save(self, *args, **kwargs):
+        self.progress = self.STATUS_PROGRESS.get(self.current_status, 5)
+        if kwargs.get("update_fields") is not None:
+            kwargs["update_fields"] = set(kwargs["update_fields"]) | {"progress"}
+        super().save(*args, **kwargs)
 
     destination_country = models.CharField(
         max_length=100,
@@ -132,6 +154,25 @@ class StudentProfile(models.Model):
         return self.full_name or self.user.username
 
 
+class StudentAgreement(models.Model):
+    """A generated, downloadable snapshot of a student's service agreement."""
+
+    student = models.ForeignKey(
+        StudentProfile,
+        on_delete=models.CASCADE,
+        related_name="agreements",
+    )
+    pdf_file = models.BinaryField()
+    file_name = models.CharField(max_length=180)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ("-created_at",)
+
+    def __str__(self):
+        return f"Agreement for {self.student} ({self.created_at:%Y-%m-%d})"
+
+
 class StudentApplication(models.Model):
 
     STATUS_CHOICES = StudentProfile.STATUS_CHOICES
@@ -161,6 +202,12 @@ class StudentApplication(models.Model):
 
     class Meta:
         ordering = ("-updated_at", "-created_at")
+
+    def save(self, *args, **kwargs):
+        self.progress = StudentProfile.STATUS_PROGRESS.get(self.current_status, 5)
+        if kwargs.get("update_fields") is not None:
+            kwargs["update_fields"] = set(kwargs["update_fields"]) | {"progress"}
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.student} - {self.university} - {self.course}"
