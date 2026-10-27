@@ -3,15 +3,8 @@
 
 {% block title %}{{ archive_title }} | Bright Abroad China{% endblock %}
 {% block meta_description %}{{ archive_description }} Bright Beyond Borders.{% endblock %}
-{% block social_meta %}
-    <link rel="canonical" href="{{ request.build_absolute_uri }}">
-    <meta property="og:type" content="website">
-    <meta property="og:title" content="{{ archive_title }} | Bright Abroad China">
-    <meta property="og:description" content="{{ archive_description }}">
-    <meta property="og:url" content="{{ request.build_absolute_uri }}">
-    <meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{% static 'images/Logo.png' %}">
-    <meta name="twitter:card" content="summary_large_image">
-{% endblock %}
+{% block og_title %}{{ archive_title }} | Bright Abroad China{% endblock %}
+{% block og_description %}{{ archive_description }} Bright Beyond Borders.{% endblock %}
 {% block extra_head %}<link rel="stylesheet" href="{% static 'blog/blog.css' %}">{% endblock %}
 
 {% block content %}

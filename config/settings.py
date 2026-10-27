@@ -48,6 +48,10 @@ CSRF_TRUSTED_ORIGINS = env_list(
     "http://127.0.0.1:8000,http://localhost:8000,"
     "https://brightabroadchina.webnestle.com",
 )
+PUBLIC_SITE_URL = os.getenv(
+    "PUBLIC_SITE_URL",
+    "https://brightabroadchina.webnestle.com",
+).rstrip("/")
 
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 SECURE_SSL_REDIRECT = env_bool("SECURE_SSL_REDIRECT")
@@ -103,6 +107,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'students.context_processors.notification_context',
+                'config.context_processors.site_metadata',
             ],
         },
     },

@@ -24,9 +24,19 @@
         })();
     </script>
 
-    <title>{% block title %}Student Agency{% endblock %}</title>
-    <meta name="description" content="{% block meta_description %}Bright Abroad China guides students from Bangladesh exploring undergraduate, master&rsquo;s and doctoral study at universities in China.{% endblock %}">
-    {% block social_meta %}{% endblock %}
+    <title>{% block title %}Bright Abroad China | Fully Funded Scholarships in China{% endblock %}</title>
+    <meta name="description" content="{% block meta_description %}Explore fully funded scholarship opportunities in China for Bangladeshi students pursuing BSc, MSc, and PhD. Get guidance on university selection, applications, visas, and post-arrival support.{% endblock %}">
+    <link rel="canonical" href="{% block canonical_url %}{{ site_url }}{{ request.path }}{% endblock %}">
+    <meta property="og:type" content="{% block og_type %}website{% endblock %}">
+    <meta property="og:title" content="{% block og_title %}Study in China with Bright Abroad | BSc, MSc &amp; PhD Scholarships{% endblock %}">
+    <meta property="og:description" content="{% block og_description %}Your dream of studying in China starts here! Bright Abroad helps Bangladeshi students explore fully funded scholarships, top Chinese universities, and application guidance from start to arrival.{% endblock %}">
+    <meta property="og:image" content="{% block og_image %}{{ site_url }}{% static 'images/preview.jpg' %}{% endblock %}">
+    <meta property="og:url" content="{% block og_url %}{{ site_url }}{{ request.path }}{% endblock %}">
+    <meta property="og:site_name" content="Bright Abroad &ndash; China">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{% block twitter_title %}Study in China with Bright Abroad | BSc, MSc &amp; PhD Scholarships{% endblock %}">
+    <meta name="twitter:description" content="{% block twitter_description %}Your dream of studying in China starts here! Bright Abroad helps Bangladeshi students explore fully funded scholarships, top Chinese universities, and application guidance from start to arrival.{% endblock %}">
+    <meta name="twitter:image" content="{% block twitter_image %}{{ site_url }}{% static 'images/preview.jpg' %}{% endblock %}">
     {% block extra_head %}{% endblock %}
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
