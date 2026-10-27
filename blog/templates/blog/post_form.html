@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ page_title }} | Bright Abroad China{% endblock %}
+{% block extra_head %}
+    <link rel="stylesheet" href="{% static 'blog/blog.css' %}">
+    <script src="https://cdn.ckeditor.com/ckeditor5/41.4.2/classic/ckeditor.js"></script>
+    <script src="{% static 'blog/editor.js' %}" defer></script>
+{% endblock %}
+
+{% block content %}
+<main class="blog-page blog-editor-page">
+    <a class="blog-back-link" href="{% url 'blog_manage' %}">&#8592; Back to blog workspace</a>
+    <header class="blog-manager-header">
+        <div><p class="blog-eyebrow">Editorial workspace</p><h1>{{ page_title }}</h1><p>Shape your story, preview its search appearance and publish when it is ready.</p></div>
+    </header>
+    <form class="blog-editor-form" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {% if form.non_field_errors %}<div class="blog-form-errors">{{ form.non_field_errors }}</div>{% endif %}
+        <div class="blog-editor-main">
+            <section class="blog-editor-panel">
+                <div class="blog-form-field blog-title-field"><label for="{{ form.title.id_for_label }}">Post title</label>{{ form.title }}{{ form.title.errors }}</div>
+                <div class="blog-form-field"><label for="{{ form.slug.id_for_label }}">URL slug</label>{{ form.slug }}{{ form.slug.errors }}<small>Leave blank to create a URL from your title.</small></div>
+                <div class="blog-form-field"><label for="{{ form.excerpt.id_for_label }}">Short introduction</label>{{ form.excerpt }}{{ form.excerpt.errors }}<small>Appears on the homepage, archive cards and social search previews.</small></div>
+                <div class="blog-form-field blog-content-field"><label for="{{ form.content.id_for_label }}">Your article</label>{{ form.content }}{{ form.content.errors }}</div>
+            </section>
+            <aside class="blog-editor-sidebar">
+                <section class="blog-editor-panel blog-publish-panel">
+                    <span class="blog-eyebrow">Ready to go?</span>
+                    <label class="blog-publish-toggle">{{ form.is_published }}<span><strong>Publish post</strong><small>Visible to everyone when enabled</small></span></label>
+                    {{ form.is_published.errors }}
+                    <button class="blog-primary-button" type="submit">{% if post %}Save changes{% else %}Save post{% endif %}</button>
+                    {% if post and post.is_published %}<a class="blog-preview-link" href="{{ post.get_absolute_url }}" target="_blank" rel="noopener">View published article &#8599;</a>{% endif %}
+                </section>
+                <section class="blog-editor-panel">
+                    <h2>Organise</h2>
+                    <div class="blog-form-field"><label for="{{ form.category.id_for_label }}">Category</label>{{ form.category }}{{ form.category.errors }}</div>
+                    <div class="blog-form-field"><label for="{{ form.new_category.id_for_label }}">{{ form.new_category.label }}</label>{{ form.new_category }}{{ form.new_category.errors }}<small>{{ form.new_category.help_text }}</small></div>
+                    <div class="blog-form-field"><label>Existing tags</label>{{ form.tags }}{{ form.tags.errors }}</div>
+                    <div class="blog-form-field"><label for="{{ form.tag_names.id_for_label }}">{{ form.tag_names.label }}</label>{{ form.tag_names }}{{ form.tag_names.errors }}<small>{{ form.tag_names.help_text }}</small></div>
+                </section>
+                <section class="blog-editor-panel">
+                    <h2>Featured image</h2>
+                    {% if post.featured_image %}<img class="blog-current-cover" src="{{ post.featured_image.url }}" alt="{{ post.image_alt|default:post.title }}">{% endif %}
+                    <div class="blog-form-field"><label for="{{ form.featured_image.id_for_label }}">Thumbnail image</label>{{ form.featured_image }}{{ form.featured_image.errors }}</div>
+                    <div class="blog-form-field"><label for="{{ form.image_alt.id_for_label }}">Image description</label>{{ form.image_alt }}{{ form.image_alt.errors }}</div>
+                </section>
+                <section class="blog-editor-panel">
+                    <h2>Search &amp; social preview</h2>
+                    <div class="blog-form-field"><label for="{{ form.seo_title.id_for_label }}">SEO title</label>{{ form.seo_title }}{{ form.seo_title.errors }}<small>Optional; defaults to your article title.</small></div>
+                    <div class="blog-form-field"><label for="{{ form.seo_description.id_for_label }}">SEO description</label>{{ form.seo_description }}{{ form.seo_description.errors }}<small>Optional; defaults to your introduction.</small></div>
+                </section>
+            </aside>
+        </div>
+    </form>
+</main>
+{% endblock %}

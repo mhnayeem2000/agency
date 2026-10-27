@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ post.seo_page_title }} | Bright Abroad China{% endblock %}
+{% block meta_description %}{{ post.seo_page_description }}{% endblock %}
+{% block social_meta %}
+    <link rel="canonical" href="{{ canonical_url }}">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="{{ post.seo_page_title }}">
+    <meta property="og:description" content="{{ post.seo_page_description }}">
+    <meta property="og:url" content="{{ canonical_url }}">
+    <meta property="og:image" content="{{ social_image }}">
+    <meta property="og:image:alt" content="{{ post.image_alt|default:post.title }}">
+    <meta property="article:published_time" content="{{ post.published_at|date:'c' }}">
+    {% if post.category %}<meta property="article:section" content="{{ post.category.name }}">{% endif %}
+    {% for tag in post.tags.all %}<meta property="article:tag" content="{{ tag.name }}">{% endfor %}
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ post.seo_page_title }}">
+    <meta name="twitter:description" content="{{ post.seo_page_description }}">
+    <meta name="twitter:image" content="{{ social_image }}">
+    <script type="application/ld+json">{{ structured_data|safe }}</script>
+{% endblock %}
+{% block extra_head %}<link rel="stylesheet" href="{% static 'blog/blog.css' %}">{% endblock %}
+
+{% block content %}
+<main class="blog-page blog-detail-page">
+    <nav class="blog-breadcrumbs" aria-label="Breadcrumb">
+        <a href="{% url 'home' %}">Home</a><span aria-hidden="true">/</span><a href="{% url 'blog_archive' %}">Journal</a>
+        {% if post.category %}<span aria-hidden="true">/</span><a href="{% url 'blog_category' post.category.slug %}">{{ post.category.name }}</a>{% endif %}
+    </nav>
+
+    <article class="blog-article">
+        <header class="blog-article-header">
+            <h1>{{ post.title }}</h1>
+        </header>
+
+        {% if post.featured_image %}
+            <figure class="blog-cover">
+                <img src="{{ post.featured_image.url }}" alt="{{ post.image_alt|default:post.title }}" loading="eager" fetchpriority="high" decoding="async">
+            </figure>
+        {% endif %}
+
+        <div class="blog-article-meta">
+            <div class="blog-article-byline">
+                <span class="blog-author-avatar" aria-hidden="true">{{ post.author.first_name|default:"G"|slice:":1"|upper }}</span>
+                <span><strong>{% if post.author %}{{ post.author.get_full_name|default:post.author.username }}{% else %}Bright Abroad China{% endif %}</strong><small>Published {{ post.published_at|date:"F j, Y" }}</small></span>
+            </div>
+            <div class="blog-article-taxonomy" aria-label="Article categories and tags">
+                {% if post.category %}<a class="blog-category-chip" href="{% url 'blog_category' post.category.slug %}">{{ post.category.name }}</a>{% endif %}
+                {% for tag in post.tags.all %}<a class="blog-article-tag" href="{% url 'blog_tag' tag.slug %}">{{ tag.name }}</a>{% endfor %}
+            </div>
+        </div>
+
+        <div class="blog-article-content">
+            {% if post.excerpt %}<p class="blog-article-excerpt">{{ post.excerpt }}</p>{% endif %}
+            <div class="blog-rich-content">{{ post.content|safe }}</div>
+        </div>
+    </article>
+
+    <aside class="blog-share-footer" aria-label="Share this article">
+        <div>
+            <span class="blog-eyebrow">Enjoyed this article?</span>
+            <h2>Share it with someone</h2>
+        </div>
+        <div class="blog-share-actions">
+            <a href="https://www.facebook.com/sharer/sharer.php?u={{ share_url|urlencode }}" target="_blank" rel="noopener noreferrer" aria-label="Share on Facebook">f</a>
+            <a href="https://www.linkedin.com/sharing/share-offsite/?url={{ share_url|urlencode }}" target="_blank" rel="noopener noreferrer" aria-label="Share on LinkedIn">in</a>
+            <a href="https://twitter.com/intent/tweet?url={{ share_url|urlencode }}&amp;text={{ post.title|urlencode }}" target="_blank" rel="noopener noreferrer" aria-label="Share on X">𝕏</a>
+            <button type="button" data-copy-link="{{ share_url }}" aria-label="Copy article link">Copy link</button>
+            <small class="blog-copy-status" aria-live="polite"></small>
+        </div>
+    </aside>
+
+    {% if related_posts %}
+        <section class="blog-related" aria-labelledby="related-title">
+            <div class="blog-results-heading">
+                <div><span class="blog-eyebrow">Keep exploring</span><h2 id="related-title">More in {{ post.category.name }}</h2></div>
+                <a class="blog-read-link" href="{% url 'blog_category' post.category.slug %}">View category <span aria-hidden="true">&#8594;</span></a>
+            </div>
+            <div class="blog-card-grid">
+                {% for post in related_posts %}
+                    {% include "blog/_post_card.html" with post=post %}
+                {% endfor %}
+            </div>
+        </section>
+    {% endif %}
+</main>
+<script src="{% static 'blog/share.js' %}" defer></script>
+{% endblock %}

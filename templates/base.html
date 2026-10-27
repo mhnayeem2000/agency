@@ -11,8 +11,23 @@
     <link rel="manifest" href="{% url 'manifest' %}">
     <link rel="icon" href="{% static 'pwa/Appicon.png' %}" type="image/png">
     <link rel="apple-touch-icon" href="{% static 'pwa/Appicon.png' %}">
+    <script>
+        (function () {
+            try {
+                var savedTheme = window.localStorage.getItem("brightabroadchina:theme");
+                if (savedTheme === "light" || savedTheme === "dark") {
+                    document.documentElement.dataset.theme = savedTheme;
+                }
+            } catch (error) {
+                console.warn("Theme preference could not be loaded.", error);
+            }
+        })();
+    </script>
 
     <title>{% block title %}Student Agency{% endblock %}</title>
+    <meta name="description" content="{% block meta_description %}Bright Abroad China guides students from Bangladesh exploring undergraduate, master&rsquo;s and doctoral study at universities in China.{% endblock %}">
+    {% block social_meta %}{% endblock %}
+    {% block extra_head %}{% endblock %}
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
@@ -243,35 +258,30 @@
         .menu-toggle[aria-expanded="true"] span:nth-child(3) { top: 20px; transform: rotate(-45deg); }
 
         .page-loader {
-            animation: loader-out 500ms 300ms forwards;
-            background: var(--ink);
+            align-items: center;
+            background: rgba(248, 250, 253, .97);
+            backdrop-filter: blur(12px);
+            display: flex;
             inset: 0;
+            justify-content: center;
+            opacity: 1;
             position: fixed;
+            transition: opacity 320ms ease, visibility 320ms ease;
+            visibility: visible;
             z-index: 100;
         }
 
-        .page-loader::after {
-            animation: loader-pulse 900ms ease-in-out infinite;
-            border: 3px solid rgba(255, 255, 255, 0.25);
-            border-radius: 50%;
-            border-top-color: #a8c4ff;
-            content: "";
-            height: 34px;
-            left: calc(50% - 20px);
-            position: absolute;
-            top: calc(50% - 20px);
-            width: 34px;
+        .page-loader.is-hidden {
+            opacity: 0;
+            pointer-events: none;
+            visibility: hidden;
         }
 
-        .page-loader::before {
-            animation: skeleton-glow 1200ms ease-in-out infinite;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,.18), transparent);
-            content: "";
-            height: 5px;
-            left: calc(50% - 80px);
-            position: absolute;
-            top: calc(50% + 32px);
-            width: 160px;
+        .page-loader img {
+            animation: loader-pulse 1.8s ease-in-out infinite;
+            height: auto;
+            max-width: min(190px, 52vw);
+            object-fit: contain;
         }
 
         .reveal {
@@ -282,9 +292,7 @@
 
         .reveal.is-visible { opacity: 1; transform: translateY(0); }
 
-        @keyframes loader-out { to { opacity: 0; visibility: hidden; } }
-        @keyframes loader-pulse { to { transform: rotate(360deg); } }
-        @keyframes skeleton-glow { from { transform: translateX(-160px); } to { transform: translateX(160px); } }
+        @keyframes loader-pulse { 50% { opacity: .78; transform: scale(1.045); } }
 
         .container {
             margin: 0 auto;
@@ -924,55 +932,19 @@
             border: 1px solid rgba(37, 99, 235, 0.08);
             border-radius: 999px;
             box-shadow: inset 0 2px 4px rgba(23, 32, 51, 0.08);
-            height: 20px;
-            overflow: visible;
+            height: 12px;
+            overflow: hidden;
             position: relative;
         }
 
         .progress-fill {
-            animation: progress-fill-in 1100ms cubic-bezier(.2,.8,.2,1) both;
-            background: linear-gradient(90deg, #2563eb, #4f8cff 72%, #7da9ff);
+            animation: progress-fill-in 800ms cubic-bezier(.22, 1, .36, 1) both;
+            background: linear-gradient(90deg, #2563eb, #38a890);
             border-radius: inherit;
             height: 100%;
             max-width: 100%;
             position: relative;
             width: var(--progress);
-        }
-
-        .progress-fill::before {
-            animation: progress-shimmer 1600ms ease-in-out infinite;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,.7), transparent);
-            border-radius: inherit;
-            content: "";
-            inset: 0;
-            position: absolute;
-            transform: translateX(-100%);
-        }
-
-        .progress-spark {
-            animation: progress-spark-pulse 900ms ease-in-out infinite alternate;
-            background: #fff;
-            border: 4px solid #7da9ff;
-            border-radius: 50%;
-            box-shadow: 0 0 0 4px rgba(125,169,255,.22), 0 0 18px 5px rgba(37,99,235,.45);
-            height: 16px;
-            position: absolute;
-            right: -8px;
-            top: 1px;
-            width: 16px;
-        }
-
-        .progress-spark::after {
-            background: #ffbd66;
-            border-radius: 60% 40% 60% 40%;
-            box-shadow: 0 0 12px 3px rgba(255, 153, 61, .7);
-            content: "";
-            height: 10px;
-            position: absolute;
-            right: -8px;
-            top: -5px;
-            transform: rotate(35deg);
-            width: 6px;
         }
 
         .progress-scale {
@@ -984,8 +956,6 @@
         }
 
         @keyframes progress-fill-in { from { width: 0; } to { width: var(--progress); } }
-        @keyframes progress-shimmer { to { transform: translateX(100%); } }
-        @keyframes progress-spark-pulse { from { transform: scale(.9); } to { transform: scale(1.12); } }
 
         .progress-score {
             align-items: flex-end;
@@ -1617,7 +1587,7 @@
 
         /* Public home — self-contained, replacing the earlier homepage rules. */
         .home-page { overflow: hidden; }
-        .container.home-container { max-width: none; padding: clamp(20px, 3vw, 40px) 0 88px; }
+        .container.home-container { max-width: none; padding: 0 0 88px; }
         .home-wrap { margin: 0 auto; max-width: 1280px; padding: 0 clamp(20px, 4vw, 36px); }
         .hero-panel { background: #101a31; border-radius: 28px; color: #fff; display: grid; gap: clamp(28px, 5vw, 76px); grid-template-columns: minmax(0, 1.14fr) minmax(310px, .86fr); isolation: isolate; overflow: hidden; padding: clamp(32px, 6vw, 82px); position: relative; }
         .hero-panel::before, .hero-panel::after { border-radius: 999px; content: ""; filter: blur(2px); position: absolute; z-index: -1; }
@@ -1668,7 +1638,6 @@
         .roadmap { display: grid; gap: 15px; grid-template-columns: repeat(3, 1fr); }
         .roadmap-item { background: rgba(255,255,255,.82); border: 1px solid #dfe8f8; border-radius: 16px; padding: 22px; position: relative; }.roadmap-number { color: #2563eb; font-size: 12px; font-weight: 700; }.roadmap-item h3 { font-size: 19px; margin: 28px 0 8px; }.roadmap-item p { font-size: 14px; margin: 0; }
         .why-grid { display: grid; gap: 18px; grid-template-columns: 1.1fr .9fr; }.why-feature { background: #13213d; border-radius: 24px; color: #fff; padding: clamp(30px, 5vw, 58px); }.why-feature h2 { font-size: clamp(31px, 4vw, 50px); letter-spacing: -.045em; margin: 0; }.why-feature p { color: #bdcbe1; font-size: 16px; max-width: 510px; }.why-feature .button { background: #92f0d2; border-radius: 12px; color: #13213d; margin-top: 8px; }.why-list { display: grid; gap: 12px; }.why-item { border: 1px solid #e4eaf2; border-radius: 18px; padding: 22px; }.why-item strong { color: #172033; display: block; font-family: "Space Grotesk", sans-serif; font-size: 17px; }.why-item p { font-size: 14px; margin: 7px 0 0; }
-        .faq-section { display: grid; gap: 42px; grid-template-columns: minmax(230px, .7fr) minmax(0, 1.3fr); }.faq-section h2 { font-size: clamp(31px, 4vw, 48px); letter-spacing: -.04em; margin: 0; }.faq-list details { border-bottom: 1px solid #e1e7f0; padding: 0 0 18px; }.faq-list details + details { padding-top: 18px; }.faq-list summary { color: #172033; cursor: pointer; font-family: "Space Grotesk", sans-serif; font-size: 18px; font-weight: 600; list-style: none; padding-right: 34px; position: relative; }.faq-list summary::after { color: #2563eb; content: "+"; font-family: "DM Sans", sans-serif; font-size: 26px; font-weight: 400; position: absolute; right: 1px; top: -6px; }.faq-list details[open] summary::after { content: "−"; }.faq-list details p { font-size: 15px; line-height: 1.7; margin: 12px 0 0; }
         .site-footer { background: #101a31; color: #fff; margin-top: clamp(80px, 12vw, 144px); }.home-container + .site-footer { margin-top: 0; }.footer-inner { display: grid; gap: 36px; grid-template-columns: 1.25fr .75fr .75fr; margin: 0 auto; max-width: 1280px; padding: 58px clamp(20px, 4vw, 36px) 28px; }.footer-brand { color: #fff; display: inline-flex; font-family: "Space Grotesk", sans-serif; font-size: 19px; font-weight: 700; text-decoration: none; }.footer-brand img { filter: brightness(0) invert(1); height: 38px; max-width: 210px; object-fit: contain; object-position: left; }.footer-copy { color: #aebbd0; font-size: 14px; line-height: 1.65; margin: 15px 0 0; max-width: 340px; }.footer-column h3 { color: #8daeff; font-family: "DM Sans", sans-serif; font-size: 11px; letter-spacing: .12em; margin: 4px 0 14px; text-transform: uppercase; }.footer-column a { color: #d7dfed; display: block; font-size: 14px; margin: 10px 0; text-decoration: none; transition: color .18s ease, transform .18s ease; }.footer-column a:hover { color: #92f0d2; transform: translateX(3px); }.footer-bottom { border-top: 1px solid rgba(255,255,255,.11); color: #93a2ba; display: flex; font-size: 12px; justify-content: space-between; margin: 0 auto; max-width: 1280px; padding: 18px clamp(20px, 4vw, 36px) 24px; }
 
         .auth-layout {
@@ -2317,7 +2286,7 @@
             .journey-card { transform: rotate(2deg); }
             .service-grid, .roadmap { grid-template-columns: 1fr; }
             .service-card { min-height: auto; }.service-card h3 { margin-top: 28px; }
-            .section-heading-home, .why-grid, .faq-section { grid-template-columns: 1fr; }
+            .section-heading-home, .why-grid { grid-template-columns: 1fr; }
             .section-heading-home { gap: 14px; }.section-heading-home p:not(.section-kicker) { font-size: 16px; }
             .journey-section .section-heading-home { margin-bottom: 28px; }
         }
@@ -2330,7 +2299,7 @@
             .menu-toggle { height: 40px; width: 40px; }
             .user-chip { font-size: 12px; max-width: 112px; padding: 6px 9px; }
             .nav-links { border-radius: 0 0 18px 18px; box-shadow: 0 18px 32px rgba(23,32,51,.14); padding-left: 18px; padding-right: 18px; }
-            .container.home-container { padding-top: 16px; }
+            .container.home-container { padding-top: 0; }
             .home-wrap { padding-left: 16px; padding-right: 16px; }
             .hero-panel { border-radius: 22px; gap: 22px; padding: 32px 22px 22px; }
             .hero-copy h1 { font-size: clamp(38px, 11vw, 53px); }
@@ -2351,13 +2320,19 @@
 
 <body>
 
-<div class="page-loader" aria-hidden="true"></div>
+<div class="page-loader" role="status" aria-label="Loading page">
+    <img src="{% static 'images/RLogo.webp' %}" alt="">
+</div>
 
-<nav class="navbar">
+<nav class="navbar{% if request.resolver_match.url_name == 'home' %} navbar--home{% endif %}">
     <div class="navbar-inner">
     <a class="brand" href="/">
-        <img class="brand-logo" src="{% static 'images/RLogoH.png' %}" alt="Bright Abroad China">
+        <img class="brand-logo" src="{% static 'images/RLogoH.webp' %}" alt="Bright Abroad China — Bright Beyond Borders">
     </a>
+    <button class="theme-toggle" type="button" aria-label="Switch to dark mode" aria-pressed="false" title="Switch to dark mode">
+        <svg class="theme-icon theme-icon--moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.2 15.4A8.5 8.5 0 0 1 8.6 3.8 8.5 8.5 0 1 0 20.2 15.4Z"/></svg>
+        <svg class="theme-icon theme-icon--sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"/></svg>
+    </button>
 
     <div class="topbar-actions">
         {% if user.is_authenticated %}{% if user.is_superuser or user.role == "staff" %}
@@ -2370,7 +2345,7 @@
             {% if unread_notification_count %}<span class="notification-badge">{% if unread_notification_count > 9 %}9+{% else %}{{ unread_notification_count }}{% endif %}</span>{% endif %}
         </button>
         {% endif %}{% else %}
-        <a class="app-action" href="{% url 'login' %}" aria-label="Log in" title="Log in">
+        <a class="app-action" href="{% url 'login' %}" aria-label="Login" title="Login">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z"/><path d="M4.5 20a7.5 7.5 0 0 1 15 0"/></svg>
         </a>
         {% endif %}
@@ -2383,7 +2358,7 @@
         <div class="nav-links" id="primary-navigation">
             <div class="drawer-head">
                 <a class="brand" href="/">
-                    <img class="brand-logo" src="{% static 'images/Logo.png' %}" alt="Bright Abroad China">
+                    <img class="brand-logo" src="{% static 'images/Logo.webp' %}" alt="Bright Abroad China — Bright Beyond Borders">
                 </a>
                 <button class="drawer-close" type="button" data-drawer-close aria-label="Close menu">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12"/><path d="M18 6 6 18"/></svg>
@@ -2394,12 +2369,14 @@
                 <div>
                     <strong>{{ user.first_name|default:user.username }}</strong>
                     <small>{% if user.is_superuser or user.role == "staff" %}Agency workspace{% else %}Student account{% endif %}</small>
-                    {% if not user.is_superuser and user.role != "staff" %}<a href="{% url 'progress' %}">Track your progress &#8594;</a>{% endif %}
+                    {% if not user.is_superuser and user.role != "staff" %}<a href="{% url 'progress' %}">Progress &#8594;</a>{% endif %}
                 </div>
             </div>
             <span class="drawer-section-title">Workspace</span>
             {% if user.is_superuser or user.role == "staff" %}
-                <a class="nav-cta {% if request.resolver_match.url_name == 'agency_dashboard' or request.resolver_match.url_name == 'agency_student_detail' or request.resolver_match.url_name == 'agency_application_detail' %}nav-active{% endif %}" href="{% url 'agency_dashboard' %}">Agency workspace</a>
+                <a class="nav-cta {% if request.resolver_match.url_name == 'agency_dashboard' or request.resolver_match.url_name == 'agency_student_detail' or request.resolver_match.url_name == 'agency_application_detail' %}nav-active{% endif %}" href="{% url 'agency_dashboard' %}">Agency</a>
+                <a href="{% url 'blog_manage' %}">Posts</a>
+                <a href="{% url 'blog_archive' %}">Blog</a>
             {% else %}
                 <a class="{% if request.resolver_match.url_name == 'dashboard' %}nav-active{% endif %}" href="{% url 'dashboard' %}">Dashboard</a>
                 <a class="{% if request.resolver_match.url_name == 'profile' or request.resolver_match.url_name == 'academic_add' or request.resolver_match.url_name == 'academic_delete' %}nav-active{% endif %}" href="{% url 'profile' %}">Profile</a>
@@ -2407,33 +2384,34 @@
                 <a class="{% if request.resolver_match.url_name == 'progress' %}nav-active{% endif %}" href="{% url 'progress' %}">Progress</a>
                 <a class="notification-link {% if request.resolver_match.url_name == 'notifications' or request.resolver_match.url_name == 'notification_read' %}nav-active{% endif %}" href="{% url 'notifications' %}" aria-label="Notifications"><span class="notification-icon" aria-hidden="true">&#128276;</span>{% if unread_notification_count %}<span class="notification-badge">{% if unread_notification_count > 9 %}9+{% else %}{{ unread_notification_count }}{% endif %}</span>{% endif %}</a>
             {% endif %}
-                        <a class="nav-logout" href="{% url 'logout' %}">Log out</a>
+                        <a class="nav-logout" href="{% url 'logout' %}">Logout</a>
         </div>
     {% else %}
         <div class="nav-links" id="primary-navigation">
             <div class="drawer-head">
                 <a class="brand" href="/">
-                    <img class="brand-logo" src="{% static 'images/Logo.png' %}" alt="Bright Abroad China">
+                    <img class="brand-logo" src="{% static 'images/Logo.webp' %}" alt="Bright Abroad China — Bright Beyond Borders">
                 </a>
                 <button class="drawer-close" type="button" data-drawer-close aria-label="Close menu">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12"/><path d="M18 6 6 18"/></svg>
                 </button>
             </div>
             <div class="drawer-user">
-                <span class="drawer-user-avatar" aria-hidden="true">GE</span>
+                <span class="drawer-user-avatar" aria-hidden="true">BA</span>
                 <div>
                     <strong>Start your journey</strong>
                     <small>Free student account</small>
-                    <a href="{% url 'register' %}">Create account &#8594;</a>
+                    <a href="{% url 'register' %}">Apply &#8594;</a>
                 </div>
             </div>
             <span class="drawer-section-title">Explore</span>
-            <a href="/#destinations">Study destinations</a>
-            <a href="/#services">Our services</a>
-            <a href="/#process">How it works</a>
-            <a href="/#faq">Questions &amp; answers</a>
-            <a href="{% url 'login' %}">Log in</a>
-            <a class="nav-cta" href="{% url 'register' %}">Create account</a>
+            <a href="{% url 'blog_archive' %}">Blog</a>
+            <a href="/#destinations">China</a>
+            <a href="/#services">Services</a>
+            <a href="/#process">Process</a>
+            <a href="/#contact">Contact</a>
+            <a href="{% url 'login' %}">Login</a>
+            <a class="nav-cta" href="{% url 'register' %}">Apply</a>
         </div>
     {% endif %}
     </div>
@@ -2505,7 +2483,7 @@
             </a>
             <a class="bn-item" href="{% url 'logout' %}">
                 <span class="bn-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M10 6H6v12h4"/><path d="M15 12H9"/><path d="M18 9l3 3-3 3"/></svg></span>
-                <span class="bn-label">Log out</span>
+                <span class="bn-label">Logout</span>
             </a>
         {% else %}
             <a class="bn-item{% if request.resolver_match.url_name == 'dashboard' %} is-active{% endif %}" href="{% url 'dashboard' %}">
@@ -2538,19 +2516,19 @@
             </a>
             <a class="bn-item" href="/#destinations">
                 <span class="bn-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"/><path d="M4 12h16"/><path d="M12 4c2.6 2.6 2.6 13.4 0 16"/></svg></span>
-                <span class="bn-label">Countries</span>
+                <span class="bn-label">China</span>
             </a>
             <a class="bn-item" href="/#process">
                 <span class="bn-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4v8a4 4 0 0 0 4 4h7"/><circle cx="6" cy="6" r="2"/><path d="M15 13l3 3-3 3"/></svg></span>
                 <span class="bn-label">Process</span>
             </a>
-            <a class="bn-item" href="/#faq">
-                <span class="bn-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"/><path d="M9.6 9.4a2.5 2.5 0 1 1 3.4 2.2c-.7.4-1 1-1 1.7"/><path d="M12 17h.01"/></svg></span>
-                <span class="bn-label">FAQ</span>
+            <a class="bn-item" href="/#contact">
+                <span class="bn-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4h3l2 5-2.2 1.6a12 12 0 0 0 5.6 5.6L16 14l5 2v3a2 2 0 0 1-2.2 2A16 16 0 0 1 4 6.2 2 2 0 0 1 6 4Z"/></svg></span>
+                <span class="bn-label">Contact</span>
             </a>
             <a class="bn-item bn-item--cta" href="{% url 'register' %}">
                 <span class="bn-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13"/><path d="M13 6l6 6-6 6"/></svg></span>
-                <span class="bn-label">Start now</span>
+                <span class="bn-label">Start</span>
             </a>
         {% endif %}
     </div>
@@ -2587,13 +2565,13 @@
     <div class="footer-inner">
         <div>
             <a class="footer-brand" href="/">
-                <img src="{% static 'images/RLogo.png' %}" alt="Bright Abroad China">
+                <img src="{% static 'images/RLogo.webp' %}" alt="Bright Abroad China — Bright Beyond Borders">
             </a>
-            <p class="footer-copy">Clear, thoughtful guidance for every step of your international study journey &mdash; from the first shortlist to visa readiness.</p>
+            <p class="footer-copy">China-focused university application guidance for students from Bangladesh pursuing BSc, MSc and PhD study.</p>
             <ul class="footer-contact">
-                <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s6-5.2 6-10a6 6 0 1 0-12 0c0 4.8 6 10 6 10Z"/><circle cx="12" cy="11" r="2.4"/></svg><span>Level 6, House 42, Road 11, Banani, Dhaka 1213</span></li>
-                <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 4h3l2 5-2.2 1.6a12 12 0 0 0 5.6 5.6L16 14l5 2v3a2 2 0 0 1-2.2 2A16 16 0 0 1 4 6.2 2 2 0 0 1 6 4Z"/></svg><a href="tel:+8801700000000">+880 1700 000 000</a></li>
-                <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M4 8l8 5 8-5"/></svg><a href="mailto:hello@globaledulink.com">hello@globaledulink.com</a></li>
+                <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s6-5.2 6-10a6 6 0 1 0-12 0c0 4.8 6 10 6 10Z"/><circle cx="12" cy="11" r="2.4"/></svg><a href="https://www.bing.com/maps/default.aspx?v=2&amp;pc=FACEBK&amp;mid=8100&amp;where1=NO.2%2C%20Beinong%20Road%2C%20Changping%20District%2C%20Beijing%2C%20102206&amp;FORM=FBKPL1&amp;mkt=en-US" target="_blank" rel="noopener noreferrer">NO.2, Beinong Road, Changping District, Beijing, 102206</a></li>
+                <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 4h3l2 5-2.2 1.6a12 12 0 0 0 5.6 5.6L16 14l5 2v3a2 2 0 0 1-2.2 2A16 16 0 0 1 4 6.2 2 2 0 0 1 6 4Z"/></svg><a href="tel:+8801622696926">+880 1622-696926</a></li>
+                <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M4 8l8 5 8-5"/></svg><a href="mailto:brightabroadchina@gmail.com">brightabroadchina@gmail.com</a></li>
             </ul>
             <div class="footer-socials">
                 <a href="#" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 8h2.5V5H14a4 4 0 0 0-4 4v2H8v3h2v6h3v-6h2.5l.5-3H13v-1.4A1.6 1.6 0 0 1 14 8Z"/></svg></a>
@@ -2605,10 +2583,10 @@
         <div class="footer-column">
             <h3>Explore</h3>
             <a href="/#about-us">About us</a>
-            <a href="/#destinations">Study destinations</a>
+            <a href="/#destinations">China</a>
             <a href="/#services">Our services</a>
-            <a href="/#process">How it works</a>
-            <a href="/#testimonials">Student stories</a>
+            <a href="/#process">Process</a>
+            <a href="/#universities">Chinese universities</a>
         </div>
         <div class="footer-column">
             <h3>Get started</h3>
@@ -2622,24 +2600,24 @@
                 {% endif %}
             {% else %}
                 <a href="{% url 'register' %}">Create an account</a>
-                <a href="{% url 'login' %}">Log in</a>
-                <a href="/#faq">Questions &amp; answers</a>
+                <a href="{% url 'login' %}">Login</a>
+                <a href="/#contact">Contact</a>
             {% endif %}
         </div>
         <div class="footer-column footer-column--contact">
             <h3>Visit us</h3>
-            <a href="mailto:hello@globaledulink.com">hello@globaledulink.com</a>
-            <a href="tel:+8801700000000">+880 1700 000 000</a>
-            <a href="/#faq">Book a free consultation</a>
-            <p class="footer-note">Open Sunday &ndash; Thursday, 10:00 AM &ndash; 6:00 PM (BST)</p>
+            <a href="mailto:brightabroadchina@gmail.com">brightabroadchina@gmail.com</a>
+            <a href="tel:+8801622696926">+880 1622-696926</a>
+            <a href="https://www.bing.com/maps/default.aspx?v=2&amp;pc=FACEBK&amp;mid=8100&amp;where1=NO.2%2C%20Beinong%20Road%2C%20Changping%20District%2C%20Beijing%2C%20102206&amp;FORM=FBKPL1&amp;mkt=en-US" target="_blank" rel="noopener noreferrer">NO.2, Beinong Road, Changping District, Beijing, 102206</a>
+            <a href="/#contact">Book a consultation</a>
         </div>
 
     </div>
     <div class="footer-bottom">
-        <span>&copy; {% now "Y" %} Global EduLink. All rights reserved.</span>
+        <span>&copy; {% now "Y" %} Bright Abroad China. Bright Beyond Borders.</span>
         <div class="footer-bottom-links">
             <a href="/#about-us">About</a>
-            <a href="/#faq">FAQs</a>
+            <a href="/#contact">Contact</a>
             <a href="{% url 'login' %}">Student login</a>
             <a href="{% url 'register' %}">Get started</a>
         </div>
@@ -2647,6 +2625,33 @@
 </footer>
 
 <script>
+    var themeToggle = document.querySelector(".theme-toggle");
+    if (themeToggle) {
+        function updateThemeToggle() {
+            var darkMode = document.documentElement.dataset.theme === "dark";
+            themeToggle.setAttribute("aria-pressed", String(darkMode));
+            themeToggle.setAttribute("aria-label", darkMode ? "Switch to light mode" : "Switch to dark mode");
+            themeToggle.title = darkMode ? "Switch to light mode" : "Switch to dark mode";
+        }
+        themeToggle.addEventListener("click", function () {
+            var nextTheme = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+            document.documentElement.dataset.theme = nextTheme;
+            updateThemeToggle();
+            var themeMeta = document.querySelector('meta[name="theme-color"]');
+            if (themeMeta) { themeMeta.setAttribute("content", nextTheme === "dark" ? "#101827" : "#ffffff"); }
+            try {
+                window.localStorage.setItem("brightabroadchina:theme", nextTheme);
+            } catch (error) {
+                console.warn("Theme preference could not be saved.", error);
+            }
+        });
+        updateThemeToggle();
+        if (document.documentElement.dataset.theme === "dark") {
+            var themeMeta = document.querySelector('meta[name="theme-color"]');
+            if (themeMeta) { themeMeta.setAttribute("content", "#101827"); }
+        }
+    }
+
     var menuToggle = document.querySelector(".menu-toggle");
     var navigation = document.querySelector("#primary-navigation");
     if (menuToggle && navigation) {
@@ -2679,6 +2684,36 @@
         toast.querySelector(".toast-close").addEventListener("click", dismiss);
         window.setTimeout(dismiss, 4000);
     });
+
+    var pageLoader = document.querySelector(".page-loader");
+    if (pageLoader) {
+        var hidePageLoader = function () {
+            pageLoader.classList.add("is-hidden");
+            pageLoader.setAttribute("aria-hidden", "true");
+        };
+        if (document.readyState !== "loading") {
+            hidePageLoader();
+        } else {
+            document.addEventListener("DOMContentLoaded", hidePageLoader, { once: true });
+        }
+        window.setTimeout(hidePageLoader, 8000);
+        document.addEventListener("click", function (event) {
+            if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) { return; }
+            var link = event.target.closest ? event.target.closest("a[href]") : null;
+            if (!link || link.hasAttribute("download") || (link.target && link.target !== "_self")) { return; }
+            var destination;
+            try {
+                destination = new URL(link.href, window.location.href);
+            } catch (error) {
+                return;
+            }
+            if (destination.origin !== window.location.origin || destination.href === window.location.href) { return; }
+            if (destination.pathname === window.location.pathname && destination.search === window.location.search && destination.hash) { return; }
+            pageLoader.classList.remove("is-hidden");
+            pageLoader.setAttribute("aria-hidden", "false");
+        });
+        window.addEventListener("pageshow", hidePageLoader);
+    }
 </script>
 
 <script>

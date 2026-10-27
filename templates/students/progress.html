@@ -14,7 +14,7 @@ Application Progress
     <div><p class="eyebrow">Current status</p><h2>{{ profile.get_current_status_display }}</h2>{% if profile.next_step %}<p>Next up: <strong>{{ profile.next_step }}</strong></p>{% endif %}</div>
     <div class="progress-score"><strong>{{ profile.progress }}%</strong><span>complete</span></div>
     <div class="progress-visual" style="--progress: {{ profile.progress }}%;" role="progressbar" aria-label="Application progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{ profile.progress }}">
-        <div class="progress-track"><div class="progress-fill"><span class="progress-spark" aria-hidden="true"></span></div></div>
+        <div class="progress-track"><div class="progress-fill"></div></div>
         <div class="progress-scale"><span>Started</span><span>Ready to go</span></div>
     </div>
 </div>

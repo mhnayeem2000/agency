@@ -1,0 +1,18 @@
+<article class="blog-card">
+    <a class="blog-card-image" href="{{ post.get_absolute_url }}" aria-label="Read {{ post.title }}">
+        {% if post.featured_image %}
+            <img src="{{ post.featured_image.url }}" alt="{{ post.image_alt|default:post.title }}" loading="lazy" decoding="async">
+        {% else %}
+            <span class="blog-card-placeholder" aria-hidden="true">Bright Abroad <span>China</span></span>
+        {% endif %}
+    </a>
+    <div class="blog-card-body">
+        <div class="blog-card-meta">
+            {% if post.category %}<a class="blog-category-chip" href="{% url 'blog_category' post.category.slug %}">{{ post.category.name }}</a>{% endif %}
+            {% if post.published_at %}<time datetime="{{ post.published_at|date:'c' }}">{{ post.published_at|date:"M j, Y" }}</time>{% endif %}
+        </div>
+        <h2><a href="{{ post.get_absolute_url }}">{{ post.title }}</a></h2>
+        <p>{{ post.excerpt }}</p>
+        <a class="blog-read-link" href="{{ post.get_absolute_url }}">Read article <span aria-hidden="true">&#8594;</span></a>
+    </div>
+</article>

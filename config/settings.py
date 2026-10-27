@@ -13,37 +13,51 @@ https://docs.djangoproject.com/en/6.1/ref/settings/
 import os
 from pathlib import Path
 
+from django.core.exceptions import ImproperlyConfigured
+from dotenv import load_dotenv
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+load_dotenv(BASE_DIR / ".env")
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.1/howto/deployment/checklist/
 
-SECRET_KEY = os.getenv("SECRET_KEY", "django-insecure-3p))^vfxrp-os6nc^2m!acp$v!3sr%*$=8yf@o&st7h%rysxxs")
-DEBUG = True
+def env_bool(name, default=False):
+    return os.getenv(name, str(default)).strip().lower() in {"1", "true", "yes", "on"}
 
-ALLOWED_HOSTS = os.getenv(
+
+def env_list(name, default=""):
+    return [value.strip() for value in os.getenv(name, default).split(",") if value.strip()]
+
+
+DEBUG = env_bool("DEBUG", False)
+SECRET_KEY = os.getenv("SECRET_KEY", "").strip()
+if not SECRET_KEY or SECRET_KEY.startswith("replace-with-"):
+    if not DEBUG:
+        raise ImproperlyConfigured("Set a unique SECRET_KEY in the deployment .env file.")
+    SECRET_KEY = "django-insecure-local-development-key-only"
+
+ALLOWED_HOSTS = env_list(
     "ALLOWED_HOSTS",
-    "127.0.0.1,localhost,ageny.webnestle.com,www.ageny.webnestle.com",
-).split(",")
-ALLOWED_HOSTS = [host.strip() for host in ALLOWED_HOSTS if host.strip()]
-
-CSRF_TRUSTED_ORIGINS = [
-    origin.strip()
-    for origin in os.getenv(
-        "CSRF_TRUSTED_ORIGINS",
-        "http://127.0.0.1:8000,http://localhost:8000,"
-        "http://ageny.webnestle.com,https://ageny.webnestle.com,"
-        "http://www.ageny.webnestle.com,https://www.ageny.webnestle.com",
-    ).split(",")
-    if origin.strip()
-]
+    "127.0.0.1,localhost,brightabroadchina.webnestle.com",
+)
+CSRF_TRUSTED_ORIGINS = env_list(
+    "CSRF_TRUSTED_ORIGINS",
+    "http://127.0.0.1:8000,http://localhost:8000,"
+    "https://brightabroadchina.webnestle.com",
+)
 
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
-SECURE_SSL_REDIRECT = os.getenv("SECURE_SSL_REDIRECT", "False").lower() in {"1", "true", "yes", "on"}
-SESSION_COOKIE_SECURE = os.getenv("SESSION_COOKIE_SECURE", "False").lower() in {"1", "true", "yes", "on"}
-CSRF_COOKIE_SECURE = os.getenv("CSRF_COOKIE_SECURE", "False").lower() in {"1", "true", "yes", "on"}
+SECURE_SSL_REDIRECT = env_bool("SECURE_SSL_REDIRECT")
+SESSION_COOKIE_SECURE = env_bool("SESSION_COOKIE_SECURE")
+CSRF_COOKIE_SECURE = env_bool("CSRF_COOKIE_SECURE")
+SECURE_HSTS_SECONDS = int(os.getenv("SECURE_HSTS_SECONDS", "0"))
+SECURE_HSTS_INCLUDE_SUBDOMAINS = env_bool("SECURE_HSTS_INCLUDE_SUBDOMAINS")
+SECURE_HSTS_PRELOAD = env_bool("SECURE_HSTS_PRELOAD")
+SECURE_CONTENT_TYPE_NOSNIFF = True
+X_FRAME_OPTIONS = "DENY"
 
 AUTH_USER_MODEL = "accounts.User"
 
@@ -55,12 +69,14 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+    'django.contrib.sitemaps',
     'django.contrib.staticfiles',
 
 
 
     "accounts",
     'students',
+    "blog",
 ]
 
 MIDDLEWARE = [
@@ -98,12 +114,35 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/6.1/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+DB_ENGINE = os.getenv("DB_ENGINE", "sqlite").strip().lower()
+if DB_ENGINE == "sqlite":
+    db_name = Path(os.getenv("DB_NAME", str(BASE_DIR / "db.sqlite3")))
+    if not db_name.is_absolute():
+        db_name = BASE_DIR / db_name
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": db_name,
+        }
     }
-}
+elif DB_ENGINE == "mysql":
+    import pymysql
+
+    pymysql.install_as_MySQLdb()
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.mysql",
+            "NAME": os.getenv("DB_NAME", ""),
+            "USER": os.getenv("DB_USER", ""),
+            "PASSWORD": os.getenv("DB_PASSWORD", ""),
+            "HOST": os.getenv("DB_HOST", "localhost"),
+            "PORT": os.getenv("DB_PORT", "3306"),
+            "OPTIONS": {"charset": "utf8mb4"},
+            "CONN_MAX_AGE": int(os.getenv("DB_CONN_MAX_AGE", "60")),
+        }
+    }
+else:
+    raise ImproperlyConfigured("DB_ENGINE must be either 'sqlite' or 'mysql'.")
 
 
 # Password validation
@@ -143,6 +182,8 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+MEDIA_URL = "/media/"
+MEDIA_ROOT = BASE_DIR / "media"
 
 STORAGES = {
     "default": {
@@ -155,10 +196,17 @@ STORAGES = {
 
 
 # Email
-# https://docs.djangoproject.com/en/6.1/topics/email/#topic-email-configuration
-
-MAILERS = {
-    'default': {
-        'BACKEND': 'django.core.mail.backends.console.EmailBackend',
-    },
-}
+# Configure SMTP variables in .env to send mail; console output is used by default.
+EMAIL_BACKEND = os.getenv(
+    "EMAIL_BACKEND",
+    "django.core.mail.backends.smtp.EmailBackend"
+    if os.getenv("EMAIL_HOST")
+    else "django.core.mail.backends.console.EmailBackend",
+)
+EMAIL_HOST = os.getenv("EMAIL_HOST", "")
+EMAIL_PORT = int(os.getenv("EMAIL_PORT", "587"))
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER", "")
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD", "")
+EMAIL_USE_TLS = env_bool("EMAIL_USE_TLS", True)
+EMAIL_USE_SSL = env_bool("EMAIL_USE_SSL")
+DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL", "Bright Abroad China <no-reply@brightabroadchina.webnestle.com>")

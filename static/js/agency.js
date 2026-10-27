@@ -1,5 +1,5 @@
 /* ==========================================================================
-   Global EduLink — front-end behaviours (vanilla JS, no dependencies)
+   Bright Abroad China — front-end behaviours (vanilla JS, no dependencies)
    Sliders · type animation · counters · media fallbacks · mobile app shell
    ========================================================================== */
 (function () {
@@ -10,6 +10,18 @@
     var FALLBACK_IMAGE = window.AGENCY_MEDIA_FALLBACK || "";
     var ICON_PREV = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>';
     var ICON_NEXT = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>';
+    var HERO_IMAGES = [
+        { src: "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/ef/Tsinghua_University_campus_1.jpg/960px-Tsinghua_University_campus_1.jpg", name: "Tsinghua University, Beijing" },
+        { src: "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/0f/Campus_No.3%2C_Peking_University%2C_Gate.jpg/960px-Campus_No.3%2C_Peking_University%2C_Gate.jpg", name: "Peking University, Beijing" },
+        { src: "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/2d/Fudan_University_Jiangwan_Campus.jpg/960px-Fudan_University_Jiangwan_Campus.jpg", name: "Fudan University, Shanghai" },
+        { src: "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/9c/After_snow_-_International_Campus%2C_Zhejiang_University.png/960px-After_snow_-_International_Campus%2C_Zhejiang_University.png", name: "Zhejiang University International Campus, Haining" },
+        { src: "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/10/A_panorama_of_Shanghai_Jiao_Tong_University_school_campus.jpg/960px-A_panorama_of_Shanghai_Jiao_Tong_University_school_campus.jpg", name: "Shanghai Jiao Tong University" },
+        { src: "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/45/Wuhan_University_Gate_Info_Campus_2014.jpg/960px-Wuhan_University_Gate_Info_Campus_2014.jpg", name: "Wuhan University" },
+        { src: "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/5e/Nanjing_University_Gulou_Campus_2010-11.jpg/960px-Nanjing_University_Gulou_Campus_2010-11.jpg", name: "Nanjing University, Gulou Campus" },
+        { src: "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/55/Guangzhou_South_Campus%2C_Sun_Yat-sen_University.jpg/960px-Guangzhou_South_Campus%2C_Sun_Yat-sen_University.jpg", name: "Sun Yat-sen University, Guangzhou" },
+        { src: "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b7/20220522_Longzihu_Campus_of_Henan_University_of_Chinese_Medicine_01.jpg/960px-20220522_Longzihu_Campus_of_Henan_University_of_Chinese_Medicine_01.jpg", name: "Henan University of Chinese Medicine, Zhengzhou" },
+        { src: "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/42/%28CHN-Fujian%29_Xiamen_University_Siming_Campus_West_Gate_2025-03-20.jpg/960px-%28CHN-Fujian%29_Xiamen_University_Siming_Campus_West_Gate_2025-03-20.jpg", name: "Xiamen University, Siming Campus" }
+    ];
 
     /* ------------------------------------------------------------------ *
      * 1. Remote image guard — swap in a local placeholder, then a gradient
@@ -46,6 +58,200 @@
     /* ------------------------------------------------------------------ *
      * 2. Slider engine — scroll-snap track + arrows + dots + autoplay
      * ------------------------------------------------------------------ */
+    function initInfiniteSlider(root, track, slides, prevBtn, nextBtn, mobileOnly) {
+        var direction = root.dataset.sliderLoop === "right" ? -1 : 1;
+        var speed = parseFloat(root.dataset.sliderSpeed || "35");
+        var clones = [];
+        var cycleWidth = 0;
+        var active = false;
+        var visible = true;
+        var paused = reduceMotion;
+        var frame = 0;
+        var position = 0;
+        var lastFrameTime = 0;
+        var resizeTimer = null;
+        var moveTimer = null;
+        var observer = null;
+        var mobileQuery = window.matchMedia("(max-width: 780px)");
+
+        function canRun() {
+            return !mobileOnly || mobileQuery.matches;
+        }
+
+        function tick(time) {
+            frame = 0;
+            if (!active || paused || !visible || document.hidden) {
+                lastFrameTime = 0;
+                return;
+            }
+            if (lastFrameTime) {
+                var elapsed = Math.min(time - lastFrameTime, 50);
+                position += direction * speed * elapsed / 1000;
+                if (direction > 0 && position >= cycleWidth * 2) {
+                    position -= cycleWidth;
+                } else if (direction < 0 && position < cycleWidth) {
+                    position += cycleWidth;
+                }
+                track.scrollLeft = position;
+            }
+            lastFrameTime = time;
+            frame = window.requestAnimationFrame(tick);
+        }
+
+        function play() {
+            if (!frame && !moveTimer && active && !paused && visible && !document.hidden) {
+                position = track.scrollLeft;
+                frame = window.requestAnimationFrame(tick);
+            }
+        }
+
+        function stop() {
+            if (frame) {
+                window.cancelAnimationFrame(frame);
+                frame = 0;
+            }
+            lastFrameTime = 0;
+            position = track.scrollLeft;
+        }
+
+        function removeClones() {
+            clones.forEach(function (clone) { clone.remove(); });
+            clones = [];
+            active = false;
+            cycleWidth = 0;
+            window.clearTimeout(moveTimer);
+            moveTimer = null;
+            root.classList.remove("slider--infinite");
+            track.scrollLeft = 0;
+            position = 0;
+            stop();
+        }
+
+        function start() {
+            if (active || !canRun()) { return; }
+            track.style.paddingRight = "";
+            function createCloneGroup() {
+                return slides.map(function (slide) {
+                    var clone = slide.cloneNode(true);
+                    clone.setAttribute("aria-hidden", "true");
+                    Array.prototype.forEach.call(
+                        clone.querySelectorAll("a, button, input, select, textarea, [tabindex]"),
+                        function (element) { element.setAttribute("tabindex", "-1"); }
+                    );
+                    return clone;
+                });
+            }
+            function appendCloneGroup(group) {
+                group.forEach(function (clone) { track.appendChild(clone); });
+            }
+            function prependCloneGroup(group) {
+                var fragment = document.createDocumentFragment();
+                group.forEach(function (clone) { fragment.appendChild(clone); });
+                track.insertBefore(fragment, track.firstChild);
+            }
+
+            var afterGroup = createCloneGroup();
+            appendCloneGroup(afterGroup);
+            cycleWidth = afterGroup[0].offsetLeft - slides[0].offsetLeft;
+            if (!(cycleWidth > 0)) {
+                afterGroup.forEach(function (clone) { clone.remove(); });
+                removeClones();
+                return;
+            }
+            var coverageGroups = Math.max(1, Math.ceil(track.clientWidth / cycleWidth));
+            clones = afterGroup.slice();
+            for (var groupIndex = 1; groupIndex < coverageGroups; groupIndex += 1) {
+                var nextGroup = createCloneGroup();
+                appendCloneGroup(nextGroup);
+                clones = clones.concat(nextGroup);
+            }
+            for (var beforeIndex = 0; beforeIndex < coverageGroups; beforeIndex += 1) {
+                var previousGroup = createCloneGroup();
+                prependCloneGroup(previousGroup);
+                clones = clones.concat(previousGroup);
+            }
+            root.classList.add("slider--infinite");
+            active = true;
+            track.scrollLeft = cycleWidth;
+            position = track.scrollLeft;
+            play();
+        }
+
+        function restartForViewport() {
+            if (active) { removeClones(); }
+            start();
+        }
+
+        function move(step) {
+            if (!active) { return; }
+            var gap = parseFloat(window.getComputedStyle(track).columnGap) || 0;
+            var distance = slides[0].getBoundingClientRect().width + gap;
+            var target = track.scrollLeft + step * distance;
+            stop();
+            track.scrollTo({
+                left: target,
+                behavior: reduceMotion ? "auto" : "smooth"
+            });
+            window.clearTimeout(moveTimer);
+            moveTimer = window.setTimeout(function () {
+                moveTimer = null;
+                var current = track.scrollLeft;
+                if (current < cycleWidth) {
+                    current += cycleWidth;
+                } else if (current >= cycleWidth * 2) {
+                    current -= cycleWidth;
+                }
+                track.scrollLeft = current;
+                position = current;
+                play();
+            }, reduceMotion ? 0 : 450);
+        }
+
+        if (prevBtn) {
+            prevBtn.addEventListener("click", function () { move(-1); });
+        }
+        if (nextBtn) {
+            nextBtn.addEventListener("click", function () { move(1); });
+        }
+
+        root.addEventListener("pointerenter", function () { paused = true; stop(); });
+        root.addEventListener("pointerleave", function () { paused = reduceMotion; play(); });
+        root.addEventListener("focusin", function () { paused = true; stop(); });
+        root.addEventListener("focusout", function (event) {
+            if (!root.contains(event.relatedTarget)) {
+                paused = reduceMotion;
+                play();
+            }
+        });
+        root.addEventListener("touchstart", function () { paused = true; stop(); }, { passive: true });
+        root.addEventListener("touchend", function () {
+            window.setTimeout(function () { paused = reduceMotion; play(); }, 900);
+        }, { passive: true });
+        document.addEventListener("visibilitychange", function () {
+            if (document.hidden) { stop(); } else { play(); }
+        });
+
+        if ("IntersectionObserver" in window) {
+            observer = new IntersectionObserver(function (entries) {
+                visible = entries[0].isIntersecting;
+                if (visible) { play(); } else { stop(); }
+            });
+            observer.observe(root);
+        }
+
+        if (mobileQuery.addEventListener) {
+            mobileQuery.addEventListener("change", restartForViewport);
+        } else {
+            mobileQuery.addListener(restartForViewport);
+        }
+        window.addEventListener("resize", function () {
+            window.clearTimeout(resizeTimer);
+            resizeTimer = window.setTimeout(restartForViewport, 120);
+        }, { passive: true });
+
+        start();
+    }
+
     function initSlider(root) {
         var track = root.querySelector("[data-slider-track]");
         if (!track || !track.children.length) {
@@ -56,6 +262,7 @@
         var navHost = root.dataset.sliderNav ? doc.querySelector(root.dataset.sliderNav) : null;
         var dotsHost = root.querySelector("[data-slider-dots]");
         var autoplayMs = parseInt(root.dataset.sliderAutoplay || "0", 10);
+        var mobileOnly = root.hasAttribute("data-slider-mobile-only");
 
         if (navHost && !navHost.children.length) {
             navHost.innerHTML =
@@ -65,6 +272,11 @@
 
         var prevBtn = root.querySelector("[data-slider-prev]") || (navHost && navHost.querySelector("[data-slider-prev]"));
         var nextBtn = root.querySelector("[data-slider-next]") || (navHost && navHost.querySelector("[data-slider-next]"));
+
+        if (root.dataset.sliderLoop) {
+            initInfiniteSlider(root, track, slides, prevBtn, nextBtn, mobileOnly);
+            return;
+        }
 
         if (dotsHost && !dotsHost.children.length && slides.length > 1) {
             dotsHost.innerHTML = slides
@@ -76,20 +288,43 @@
 
         var dots = dotsHost ? Array.prototype.slice.call(dotsHost.children) : [];
 
-        function stepSize() {
-            var gap = parseFloat(window.getComputedStyle(track).columnGap) || 0;
-            return slides[0].getBoundingClientRect().width + gap;
+        function updateEndPadding() {
+            if (mobileOnly && !window.matchMedia("(max-width: 780px)").matches) {
+                track.style.paddingRight = "";
+                return;
+            }
+            var styles = window.getComputedStyle(track);
+            var leftPadding = parseFloat(styles.paddingLeft) || 0;
+            var firstSlideWidth = slides[0].getBoundingClientRect().width;
+            track.style.paddingRight = Math.max(
+                0,
+                track.clientWidth - firstSlideWidth - leftPadding
+            ) + "px";
+        }
+
+        function slideOffset(index) {
+            var trackLeft = track.getBoundingClientRect().left + track.clientLeft;
+            var leftPadding = parseFloat(window.getComputedStyle(track).paddingLeft) || 0;
+            return slides[index].getBoundingClientRect().left - trackLeft + track.scrollLeft - leftPadding;
         }
 
         function currentIndex() {
-            var size = stepSize();
-            return size ? Math.round(track.scrollLeft / size) : 0;
+            var nearest = 0;
+            var nearestDistance = Infinity;
+            slides.forEach(function (slide, index) {
+                var distance = Math.abs(slideOffset(index) - track.scrollLeft);
+                if (distance < nearestDistance) {
+                    nearest = index;
+                    nearestDistance = distance;
+                }
+            });
+            return nearest;
         }
 
         function goTo(index) {
             var last = slides.length - 1;
             var target = index > last ? 0 : (index < 0 ? last : index);
-            track.scrollTo({ left: target * stepSize(), behavior: reduceMotion ? "auto" : "smooth" });
+            track.scrollTo({ left: slideOffset(target), behavior: reduceMotion ? "auto" : "smooth" });
         }
 
         function sync() {
@@ -123,6 +358,9 @@
             framePending = true;
             window.requestAnimationFrame(function () { framePending = false; sync(); });
         }, { passive: true });
+
+        updateEndPadding();
+        window.addEventListener("resize", updateEndPadding, { passive: true });
 
         /* desktop drag-to-scroll */
         var isDown = false;
@@ -312,6 +550,48 @@
         nodes.forEach(function (node) { observer.observe(node); });
     }
 
+    function initHeroImage() {
+        var image = doc.querySelector("[data-hero-image]");
+        if (!image || HERO_IMAGES.length < 2) { return; }
+
+        var previousIndex = -1;
+        try {
+            previousIndex = parseInt(window.localStorage.getItem("brightabroadchina:hero-image"), 10);
+        } catch (error) {
+            console.warn("The previous hero image could not be read.", error);
+        }
+
+        var index = Math.floor(Math.random() * HERO_IMAGES.length);
+        if (previousIndex >= 0 && previousIndex < HERO_IMAGES.length) {
+            var randomSlot = Math.floor(Math.random() * (HERO_IMAGES.length - 1));
+            index = randomSlot >= previousIndex ? randomSlot + 1 : randomSlot;
+        }
+
+        var selected = HERO_IMAGES[index];
+        image.src = selected.src;
+        image.alt = "Campus at " + selected.name;
+        var media = image.closest(".media");
+        if (media) { media.dataset.mediaLabel = selected.name; }
+
+        try {
+            window.localStorage.setItem("brightabroadchina:hero-image", String(index));
+        } catch (error) {
+            console.warn("The selected hero image could not be saved.", error);
+        }
+    }
+
+    function initResponsiveBlogTables() {
+        Array.prototype.forEach.call(doc.querySelectorAll(".blog-rich-content table"), function (table) {
+            if (table.parentElement && table.parentElement.classList.contains("blog-table-scroll")) { return; }
+            var wrapper = doc.createElement("div");
+            wrapper.className = "blog-table-scroll";
+            wrapper.setAttribute("role", "region");
+            wrapper.setAttribute("aria-label", "Scrollable table");
+            table.parentNode.insertBefore(wrapper, table);
+            wrapper.appendChild(table);
+        });
+    }
+
     /* ------------------------------------------------------------------ *
      * 5. Mobile app shell — drawer, notification sheet, progress, tab bar
      * ------------------------------------------------------------------ */
@@ -474,7 +754,8 @@
         if (!checklist) { return; }
 
         var studentId = checklist.dataset.studentId || "unknown";
-        var storageKey = "globaledulink:document-readiness:" + studentId;
+        var storageKey = "brightabroadchina:document-readiness:" + studentId;
+        var legacyStorageKey = ["global", "edu", "link"].join("") + ":document-readiness:" + studentId;
         var items = Array.prototype.slice.call(checklist.querySelectorAll("[data-checklist-item]"));
         var countNode = checklist.querySelector("[data-checklist-count]");
         var progressNode = checklist.querySelector("[data-checklist-progress]");
@@ -482,7 +763,11 @@
         var saved = {};
 
         try {
-            saved = JSON.parse(window.localStorage.getItem(storageKey) || "{}") || {};
+            var storedChecklist = window.localStorage.getItem(storageKey);
+            if (storedChecklist === null) {
+                storedChecklist = window.localStorage.getItem(legacyStorageKey);
+            }
+            saved = JSON.parse(storedChecklist || "{}") || {};
         } catch (error) {
             saved = {};
         }
@@ -524,6 +809,8 @@
     function boot() {
         Array.prototype.forEach.call(doc.querySelectorAll("[data-slider]"), initSlider);
         Array.prototype.forEach.call(doc.querySelectorAll("img[data-media-fallback], img[src^='http']"), guardImage);
+        initHeroImage();
+        initResponsiveBlogTables();
         initTypewriter();
         initCounters();
         initAppShell();

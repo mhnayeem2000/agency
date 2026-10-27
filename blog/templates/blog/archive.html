@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ archive_title }} | Bright Abroad China{% endblock %}
+{% block meta_description %}{{ archive_description }} Bright Beyond Borders.{% endblock %}
+{% block social_meta %}
+    <link rel="canonical" href="{{ request.build_absolute_uri }}">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="{{ archive_title }} | Bright Abroad China">
+    <meta property="og:description" content="{{ archive_description }}">
+    <meta property="og:url" content="{{ request.build_absolute_uri }}">
+    <meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{% static 'images/Logo.png' %}">
+    <meta name="twitter:card" content="summary_large_image">
+{% endblock %}
+{% block extra_head %}<link rel="stylesheet" href="{% static 'blog/blog.css' %}">{% endblock %}
+
+{% block content %}
+<main class="blog-page">
+    <header class="blog-archive-hero">
+        <div class="blog-hero-copy">
+            <p class="blog-eyebrow">Bright Abroad China <span aria-hidden="true">&middot;</span> Insights</p>
+            <h1>{{ archive_title }}</h1>
+            <p>{{ archive_description }}</p>
+        </div>
+        <div class="blog-hero-note" aria-hidden="true"><span>Good plans</span><strong>start with<br>good advice.</strong><i>✳</i></div>
+    </header>
+
+    {% if categories %}
+        <nav class="blog-category-filter" aria-label="Browse blog categories">
+            <a class="{% if request.resolver_match.url_name == 'blog_archive' %}is-selected{% endif %}" href="{% url 'blog_archive' %}">All articles</a>
+            {% for category in categories %}
+                <a class="{% if request.resolver_match.url_name == 'blog_category' and request.resolver_match.kwargs.slug == category.slug %}is-selected{% endif %}" href="{% url 'blog_category' category.slug %}">{{ category.name }} <span>{{ category.post_count }}</span></a>
+            {% endfor %}
+        </nav>
+    {% endif %}
+
+    <div class="blog-results-heading">
+        <div>
+            <span class="blog-eyebrow">The latest</span>
+            <h2>Stories &amp; guidance</h2>
+        </div>
+        <span>{{ page_obj.paginator.count }} article{{ page_obj.paginator.count|pluralize }}</span>
+    </div>
+
+    {% if posts %}
+        <div class="blog-card-grid">
+            {% for post in posts %}
+                {% include "blog/_post_card.html" with post=post %}
+            {% endfor %}
+        </div>
+        {% if page_obj.has_other_pages %}
+            <nav class="blog-pagination" aria-label="Blog pages">
+                {% if page_obj.has_previous %}<a href="?page={{ page_obj.previous_page_number }}" rel="prev">&#8592; Newer</a>{% endif %}
+                <span>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+                {% if page_obj.has_next %}<a href="?page={{ page_obj.next_page_number }}" rel="next">Older &#8594;</a>{% endif %}
+            </nav>
+        {% endif %}
+    {% else %}
+        <div class="blog-empty-state">
+            <span aria-hidden="true">✳</span>
+            <h2>Fresh ideas are on their way.</h2>
+            <p>There are no published articles here yet. Please check back soon.</p>
+        </div>
+    {% endif %}
+</main>
+{% endblock %}

@@ -89,7 +89,14 @@ def home_view(request):
     if is_agency_user(request.user):
         return redirect("agency_dashboard")
 
+    from blog.models import BlogPost
+
     return render(
         request,
-        "home.html"
+        "home.html",
+        {
+            "featured_posts": BlogPost.objects.published()
+            .select_related("category")
+            .prefetch_related("tags")[:3],
+        },
     )

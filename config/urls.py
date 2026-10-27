@@ -15,11 +15,14 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
+from django.contrib.sitemaps.views import sitemap
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.conf import settings
 from django.urls import include, path, re_path
 from django.views.static import serve
 
 from .pwa import manifest_view, service_worker_view
+from blog.sitemaps import BlogPostSitemap
 
 handler400 = "config.error_views.error_400"
 handler403 = "config.error_views.error_403"
@@ -29,15 +32,32 @@ handler500 = "config.error_views.error_500"
 urlpatterns = [
     path('manifest.json', manifest_view, name='manifest'),
     path('service-worker.js', service_worker_view, name='service_worker'),
+    path(
+        "sitemap.xml",
+        sitemap,
+        {"sitemaps": {"blog": BlogPostSitemap()}},
+        name="sitemap",
+    ),
     path('admin/', admin.site.urls),
+    path("blog/", include("blog.urls")),
     path("",include("accounts.urls")),
     path("students/",include("students.urls")),
 ]
 
-urlpatterns += [
-    re_path(
-        r"^static/(?P<path>.*)$",
-        serve,
-        {"document_root": settings.STATIC_ROOT},
-    ),
-]
+if settings.DEBUG:
+    urlpatterns += [
+        re_path(
+            r"^media/(?P<path>.*)$",
+            serve,
+            {"document_root": settings.MEDIA_ROOT},
+        ),
+    ]
+    urlpatterns += staticfiles_urlpatterns()
+else:
+    urlpatterns += [
+        re_path(
+            r"^media/(?P<path>blog/covers/.*)$",
+            serve,
+            {"document_root": settings.MEDIA_ROOT},
+        ),
+    ]

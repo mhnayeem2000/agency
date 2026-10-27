@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Manage blog | Bright Abroad China{% endblock %}
+{% block extra_head %}<link rel="stylesheet" href="{% static 'blog/blog.css' %}">{% endblock %}
+
+{% block content %}
+<main class="blog-page blog-manager">
+    <header class="blog-manager-header">
+        <div><p class="blog-eyebrow">Editorial workspace</p><h1>Your blog</h1><p>Write, refine and publish helpful stories for students.</p></div>
+        <a class="blog-primary-button" href="{% url 'blog_post_create' %}"><span aria-hidden="true">+</span> Write a post</a>
+    </header>
+    <section class="blog-manager-list" aria-label="Your posts">
+        <div class="blog-manager-row blog-manager-row--heading"><span>Article</span><span>Category</span><span>Status</span><span>Updated</span><span>Actions</span></div>
+        {% for post in posts %}
+            <div class="blog-manager-row">
+                <div class="blog-manager-title">
+                    {% if post.featured_image %}<img src="{{ post.featured_image.url }}" alt="" loading="lazy">{% else %}<span class="blog-manager-placeholder">✳</span>{% endif %}
+                    <span><strong>{{ post.title }}</strong><small>/blog/{{ post.slug }}/</small></span>
+                </div>
+                <span>{{ post.category.name|default:"Uncategorized" }}</span>
+                <span><i class="blog-status-dot {% if post.is_published %}is-published{% endif %}"></i>{% if post.is_published %}Published{% else %}Draft{% endif %}</span>
+                <time datetime="{{ post.updated_at|date:'c' }}">{{ post.updated_at|date:"M j, Y" }}</time>
+                <div class="blog-manager-actions">
+                    {% if post.is_published %}<a href="{{ post.get_absolute_url }}">View</a>{% endif %}
+                    <a href="{% url 'blog_post_edit' post.slug %}">Edit</a>
+                    <form method="post" action="{% url 'blog_post_delete' post.slug %}" onsubmit="return confirm('Delete this post? This cannot be undone.');">{% csrf_token %}<button type="submit">Delete</button></form>
+                </div>
+            </div>
+        {% empty %}
+            <div class="blog-manager-empty"><span aria-hidden="true">✳</span><h2>Your first story starts here.</h2><p>Create a post, choose its category and tags, add a thumbnail, then publish when it is ready.</p><a class="blog-primary-button" href="{% url 'blog_post_create' %}">Write your first post</a></div>
+        {% endfor %}
+    </section>
+</main>
+{% endblock %}
